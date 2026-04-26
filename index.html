@@ -858,7 +858,7 @@
     <div class="topbar-spacer"></div>
     <div class="topbar-status">
       <span class="status-dot"></span>
-      Google Search 已連線
+      Google AI Mode 已連線
     </div>
     <button class="ext-btn" id="ext-dl-top" onclick="downloadExtension()">
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
@@ -932,7 +932,7 @@
         <div class="msg-avatar agent">AI</div>
         <div class="chat-header-info">
           <h2>Google Search Agent</h2>
-          <p>透過 MCP 協定取得網頁內容 · udm=14 精準模式</p>
+          <p>透過 MCP 協定取得網頁內容 · udm=50 AI Mode</p>
         </div>
         <button class="clear-btn" onclick="clearChat()">清除對話</button>
       </div>
@@ -954,8 +954,8 @@
           <div class="msg-avatar agent">AI</div>
           <div>
             <div class="msg-bubble">
-              <p>👋 你好！我是 <strong>AI Agent</strong>，內建 Google Search MCP 工具。</p>
-              <p>我會透過 <code>udm=14</code> 精準搜尋模式查詢，並以 MCP 協定擷取網頁內容給你。</p>
+              <p>👋 你好！我是 <strong>初一 Agent</strong>，內建 Google AI Mode 工具。</p>
+              <p>我會透過 <code>udm=50</code> AI Mode 查詢，並以 MCP 協定擷取網頁內容給你。</p>
               <p>請輸入任何問題，我來幫你搜尋分析！</p>
             </div>
             <div class="msg-time">系統就緒</div>
@@ -965,17 +965,17 @@
 
       <div class="chat-input-area">
         <div class="input-toolbar">
-          <div class="tool-chip active-tool" id="chip-search" onclick="toggleTool('search')">
+          <div class="tool-chip active-tool" id="chip-ai" onclick="setMode('ai')">
             <span class="tool-chip-dot"></span>
-            Google Search
+            🟣 AI Mode (udm=50)
           </div>
-          <div class="tool-chip" id="chip-mcp" onclick="toggleTool('mcp')">
+          <div class="tool-chip" id="chip-mixed" onclick="setMode('mixed')">
             <span class="tool-chip-dot"></span>
-            MCP 擷取
+            ⚪ 混合模式
           </div>
-          <div class="tool-chip" id="chip-deep" onclick="toggleTool('deep')">
+          <div class="tool-chip" id="chip-web" onclick="setMode('web')">
             <span class="tool-chip-dot"></span>
-            深度分析
+            🔵 傳統模式 (udm=14)
           </div>
         </div>
         <div class="input-row">
@@ -1016,7 +1016,9 @@
             </div>
             <div class="sp-card-desc">定義有哪些工具可用，以及怎麼用</div>
             <div class="sp-file-list">
-              <div class="sp-file">Google Search (udm=14)</div>
+              <div class="sp-file">Google AI Mode (udm=50)</div>
+              <div class="sp-file">Google 混合模式（預設）</div>
+              <div class="sp-file">Google 傳統模式 (udm=14)</div>
               <div class="sp-file">MCP 網頁擷取</div>
               <div class="sp-file">Chrome Extension</div>
             </div>
@@ -1067,7 +1069,7 @@
           <div class="flow-steps">
             <div class="flow-step user-step">用戶輸入<div class="flow-step-sub">問題 / 指令</div></div>
             <span class="flow-arrow-icon">→</span>
-            <div class="flow-step google-step">Google Search<div class="flow-step-sub">udm=14 精準模式</div></div>
+            <div class="flow-step google-step">Google AI Mode<div class="flow-step-sub">udm=50 / 50 / 14</div></div>
             <span class="flow-arrow-icon">→</span>
             <div class="flow-step ext-step">Chrome Extension<div class="flow-step-sub">MCP 擷取頁面</div></div>
             <span class="flow-arrow-icon">→</span>
@@ -1075,7 +1077,7 @@
           </div>
 
           <div class="code-block" style="margin-top:16px"><span class="code-comment">// Google Search URL 格式</span>
-<span class="code-key">const</span> searchUrl = <span class="code-str">`https://www.google.com/search?q=<span style="color:var(--accent4)">${encodeURIComponent(query)}</span>&udm=14`</span>;
+<span class="code-key">const</span> searchUrl = <span class="code-str">`https://www.google.com/search?q=<span style="color:var(--accent4)">${encodeURIComponent(query)}</span>&udm=50`</span>; <span class="code-comment">// AI Mode</span>
 
 <span class="code-comment">// MCP 協定擷取網頁內容</span>
 <span class="code-key">const</span> mcpResult = <span class="code-key">await</span> <span class="code-fn">mcpFetch</span>({ url: searchUrl, type: <span class="code-str">'search_results'</span> });
@@ -1191,11 +1193,13 @@
 
 ## 我是誰
 名稱：初一 Agent
-角色：Google Search + MCP 資料擷取助理
+角色：Google AI Mode + MCP 資料擷取助理
 版本：0.3-mcp
 
 ## 能力清單
-- [x] Google Search (udm=14 精準模式)
+- [x] Google AI Mode (udm=50) — 純 AI 生成回覆
+- [x] Google 混合模式 — AI Overview + 傳統結果
+- [x] Google 傳統模式 (udm=14) — 純網頁連結
 - [x] MCP 協定網頁內容擷取
 - [x] 多輪對話記憶
 - [x] 結構化資料分析
@@ -1264,7 +1268,7 @@
 ## 決策流程
 1. 理解用戶意圖 → 分解子任務
 2. 判斷是否需要搜尋 (信心度 < 90% → 搜尋)
-3. 建構 Google Search URL (udm=14)
+3. 建構 Google Search URL (預設 udm=50 AI Mode)
 4. 呼叫 MCP 擷取結果
 5. 整合資訊 → 生成回覆
 
@@ -1287,6 +1291,7 @@
 
 <script>
 const TOOLS = { search: true, mcp: false, deep: false };
+let searchMode = 'ai'; // 'ai'=udm=50, 'mixed'=無參數, 'web'=udm=14
 let isProcessing = false;
 let searchHistory = JSON.parse(localStorage.getItem('agentHistory') || '[]');
 
@@ -1297,6 +1302,15 @@ function switchNav(el, tab) {
   const target = document.getElementById('tab-' + tab);
   if (target) target.classList.add('active');
   if (tab === 'history') renderHistory();
+}
+
+function setMode(mode) {
+  searchMode = mode;
+  ['ai','mixed','web'].forEach(m => {
+    document.getElementById('chip-' + m).classList.toggle('active-tool', m === mode);
+  });
+  const labels = { ai: 'Google AI Mode 已連線', mixed: 'Google 混合模式 已連線', web: 'Google 傳統模式 已連線' };
+  document.querySelector('.topbar-status').innerHTML = `<span class="status-dot"></span>${labels[mode]}`;
 }
 
 function toggleTool(name) {
@@ -1398,7 +1412,9 @@ function advancePipeline(steps) {
 }
 
 function buildSearchUrl(q) {
-  return `https://www.google.com/search?q=${encodeURIComponent(q)}&udm=14`;
+  const udm = { ai: '50', mixed: '', web: '14' }[searchMode];
+  const base = `https://www.google.com/search?q=${encodeURIComponent(q)}`;
+  return udm ? `${base}&udm=${udm}` : base;
 }
 
 function saveToHistory(query, url) {
@@ -1599,8 +1615,9 @@ async function sendMessage() {
 
   await advancePipeline(['input','search']);
 
+  const modeLabel = { ai: '🟣 Google AI Mode (udm=50)', mixed: '⚪ Google 混合模式', web: '🔵 Google 傳統模式 (udm=14)' }[searchMode];
   const toolCallHtml = `<div class="tool-call">
-    🔍 Google Search (udm=14)<br>
+    ${modeLabel}<br>
     <a href="${searchUrl}" target="_blank" style="color:var(--accent3);word-break:break-all">${searchUrl}</a>
   </div>`;
 
@@ -1612,8 +1629,9 @@ async function sendMessage() {
   let aiResponse = '';
 
   try {
-    const sysPrompt = `你是一個整合了 Google Search MCP 工具的 AI Agent。
-用戶剛才透過 Google Search (udm=14) 搜尋了：「${query}」
+    const modeDesc = { ai: 'Google AI Mode (udm=50)', mixed: 'Google 混合模式', web: 'Google 傳統模式 (udm=14)' }[searchMode];
+    const sysPrompt = `你是一個名為「初一」的 AI Agent，整合了 ${modeDesc} 工具。
+用戶剛才透過 ${modeDesc} 搜尋了：「${query}」
 搜尋 URL：${searchUrl}
 
 請根據你的知識，假設已透過 MCP 協定擷取到搜尋結果，
@@ -1641,7 +1659,7 @@ async function sendMessage() {
 
   if (!aiResponse) {
     const fallbacks = {
-      default: `關於「**${query}**」的搜尋分析：\n\n已透過 Google Search (udm=14) 精準模式送出搜尋請求，MCP 協定正在擷取網頁內容。\n\n**建議的後續步驟：**\n- 安裝 Chrome Extension 以啟用完整 MCP 擷取\n- 查看搜尋記錄頁面管理歷史查詢\n- 開啟「深度分析」工具獲得更詳細結果`
+      default: `關於「**${query}**」的搜尋分析：\n\n已透過 Google AI Mode (udm=50) 送出搜尋請求，MCP 協定正在擷取網頁內容。\n\n**建議的後續步驟：**\n- 安裝 Chrome Extension 以啟用完整 MCP 擷取\n- 查看搜尋記錄頁面管理歷史查詢\n- 切換不同搜尋模式比較結果`
     };
     aiResponse = fallbacks.default;
   }
@@ -1664,7 +1682,7 @@ async function sendMessage() {
   }, 1500);
 }
 
-function downloadExtension_REMOVED() {
+function downloadExtension() {
   const manifest = `{
   "manifest_version": 3,
   "name": "MCP Content Fetcher",
