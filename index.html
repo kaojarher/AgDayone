@@ -949,7 +949,33 @@
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
       下載 Chrome 擴充
     </button>
+    <button class="ext-btn" id="api-key-btn" onclick="toggleApiKeyPanel()" style="border-color:rgba(99,179,237,0.4);color:var(--accent)">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+      <span id="api-key-label">設定 Gemini Key</span>
+    </button>
   </header>
+
+  <!-- API Key 面板 -->
+  <div id="api-key-panel" style="display:none;position:fixed;top:56px;right:16px;z-index:200;background:var(--surface2);border:1px solid rgba(99,179,237,0.35);border-radius:12px;padding:16px;width:340px;box-shadow:0 8px 32px rgba(0,0,0,0.5)">
+    <div style="font-size:13px;font-weight:600;color:var(--accent);margin-bottom:8px">🔑 Google Gemini API Key</div>
+    <div style="font-size:11px;color:var(--text-muted);margin-bottom:10px;line-height:1.6">
+      與 Google Search 同生態系，支援免費額度。<br>
+      Key 僅存在本機 localStorage，不上傳任何伺服器。<br>
+      <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:var(--accent)">前往 Google AI Studio 免費取得 Key →</a>
+    </div>
+    <div style="font-size:11px;color:var(--text-muted);margin-bottom:8px;padding:6px 8px;background:rgba(99,179,237,0.06);border:1px solid rgba(99,179,237,0.15);border-radius:6px">
+      使用模型：<code style="color:var(--accent2);font-family:var(--mono)">gemini-2.0-flash</code>（快速 · 免費額度充足）
+    </div>
+    <div style="display:flex;gap:6px;align-items:center">
+      <input type="password" id="api-key-input" placeholder="AIza..." style="flex:1;background:var(--surface3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-family:var(--mono);font-size:12px;outline:none;" oninput="this.style.borderColor='var(--border-accent)'">
+      <button onclick="saveApiKey()" style="padding:8px 14px;background:rgba(99,179,237,0.2);border:1px solid rgba(99,179,237,0.4);border-radius:8px;color:var(--accent);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">儲存</button>
+    </div>
+    <div style="display:flex;gap:6px;margin-top:8px">
+      <button onclick="toggleKeyVisible()" style="flex:1;padding:6px;background:var(--surface3);border:1px solid var(--border);border-radius:6px;color:var(--text-muted);font-size:11px;cursor:pointer">👁 顯示/隱藏</button>
+      <button onclick="clearApiKey()" style="flex:1;padding:6px;background:var(--surface3);border:1px solid rgba(252,129,129,0.3);border-radius:6px;color:var(--accent4);font-size:11px;cursor:pointer">🗑 清除 Key</button>
+    </div>
+    <div id="api-key-status" style="font-size:11px;margin-top:8px;color:var(--text-dim);font-family:var(--mono)">尚未設定</div>
+  </div>
 
   <!-- SIDEBAR -->
   <nav class="sidebar">
@@ -1858,16 +1884,25 @@ async function sendMessage() {
 
   let aiResponse = '';
   try {
-    const modeDesc = { ai: 'Google AI Mode (udm=50)', mixed: 'Google 混合模式', web: 'Google 傳統模式 (udm=14)' }[searchMode];
-    const sysPrompt = '你是一個名為「初一」的 AI Agent，整合了 ' + modeDesc + ' 工具。\n用戶搜尋了：「' + query + '」\n搜尋 URL：' + searchUrl + '\n\n請根據你的知識對這個問題給出清晰的繁體中文回答。\n格式：直接回答 + 重點分析 + 建議的後續問題。保持簡潔，不超過300字。';
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1000, messages: [{ role: 'user', content: sysPrompt }] })
-    });
-    const data = await resp.json();
-    if (data.content && data.content[0]) aiResponse = data.content[0].text;
-  } catch(e) { aiResponse = ''; }
+    const apiKey = getApiKey();
+    if (!apiKey) {
+      aiResponse = '⚠️ 請先點右上角「設定 Gemini Key」，前往 Google AI Studio 免費取得 API Key。';
+    } else {
+      const modeDesc = { ai: 'Google AI Mode (udm=50)', mixed: 'Google 混合模式', web: 'Google 傳統模式 (udm=14)' }[searchMode];
+      const sysPrompt = '你是一個名為「初一」的 AI Agent，整合了 ' + modeDesc + ' 工具。\n用戶搜尋了：「' + query + '」\n搜尋 URL：' + searchUrl + '\n\n請根據你的知識對這個問題給出清晰的繁體中文回答。\n格式：直接回答 + 重點分析 + 建議的後續問題。保持簡潔，不超過300字。';
+      const resp = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + apiKey, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ contents: [{ parts: [{ text: sysPrompt }] }], generationConfig: { maxOutputTokens: 1024 } })
+      });
+      const data = await resp.json();
+      if (data.candidates && data.candidates[0]) {
+        aiResponse = data.candidates[0].content.parts[0].text;
+      } else if (data.error) {
+        aiResponse = '❌ Gemini API 錯誤：' + data.error.message;
+      }
+    }
+  } catch(e) { aiResponse = '❌ 連線失敗：' + e.message; }
 
   if (!aiResponse) {
     aiResponse = '關於「**' + query + '**」：已透過 ' + modeLabel + ' 送出搜尋。請安裝 Chrome Extension 以啟用完整 MCP 擷取，或使用📋貼入搜尋結果功能手動提供內容。';
@@ -1930,17 +1965,24 @@ async function submitWithPaste() {
 
   let aiResponse = '';
   try {
-    const sysPrompt = '你是一個名為「初一」的 AI Agent。\n用戶手動貼入了以下搜尋結果，請你：\n1. 分析內容\n2. 判斷是否足以回答：「' + displayQ + '」\n3. 若足夠，直接給出答案\n4. 若不足，說明缺少什麼並建議下一步\n\n===== 貼入內容 =====\n' + pasteText.slice(0, 4000) + '\n===================\n\n請用繁體中文回答，格式清晰。';
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1000, messages: [{ role: 'user', content: sysPrompt }] })
-    });
-    const data = await resp.json();
-    if (data.content && data.content[0]) aiResponse = data.content[0].text;
-  } catch(e) { aiResponse = ''; }
-
-  if (!aiResponse) aiResponse = '已收到貼入的搜尋結果（' + pasteText.length + ' 字元）。\n\n無法連線至 LLM API，請確認網路連線後再試。';
+    const apiKey = getApiKey();
+    if (!apiKey) {
+      aiResponse = '⚠️ 請先點右上角「設定 Gemini Key」，前往 Google AI Studio 免費取得 API Key。';
+    } else {
+      const sysPrompt = '你是一個名為「初一」的 AI Agent。\n用戶手動貼入了以下搜尋結果，請你：\n1. 分析內容\n2. 判斷是否足以回答：「' + displayQ + '」\n3. 若足夠，直接給出答案\n4. 若不足，說明缺少什麼並建議下一步搜尋方向\n\n===== 貼入內容 =====\n' + pasteText.slice(0, 4000) + '\n===================\n\n請用繁體中文回答，格式清晰、重點明確。';
+      const resp = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + apiKey, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ contents: [{ parts: [{ text: sysPrompt }] }], generationConfig: { maxOutputTokens: 1024 } })
+      });
+      const data = await resp.json();
+      if (data.candidates && data.candidates[0]) {
+        aiResponse = data.candidates[0].content.parts[0].text;
+      } else if (data.error) {
+        aiResponse = '❌ Gemini API 錯誤：' + data.error.message;
+      }
+    }
+  } catch(e) { aiResponse = '❌ 連線失敗：' + e.message; }
 
   removeTyping();
   setPipeline('output');
@@ -2260,11 +2302,81 @@ async function downloadExtension() {
 }
 
 // ============================================================
+// API Key 管理（Google Gemini）
+// ============================================================
+function getApiKey() {
+  return localStorage.getItem('gemini_api_key') || '';
+}
+
+function saveApiKey() {
+  const input = document.getElementById('api-key-input');
+  const key = input ? input.value.trim() : '';
+  if (!key || !key.startsWith('AIza')) {
+    showToast('❌ 請輸入正確的 Gemini API Key（以 AIza 開頭）');
+    return;
+  }
+  localStorage.setItem('gemini_api_key', key);
+  updateApiKeyStatus();
+  toggleApiKeyPanel();
+  showToast('✅ Gemini API Key 已儲存');
+}
+
+function clearApiKey() {
+  localStorage.removeItem('gemini_api_key');
+  const input = document.getElementById('api-key-input');
+  if (input) input.value = '';
+  updateApiKeyStatus();
+  showToast('🗑 Gemini API Key 已清除');
+}
+
+function toggleKeyVisible() {
+  const input = document.getElementById('api-key-input');
+  if (input) input.type = input.type === 'password' ? 'text' : 'password';
+}
+
+function toggleApiKeyPanel() {
+  const panel = document.getElementById('api-key-panel');
+  if (!panel) return;
+  const isOpen = panel.style.display !== 'none';
+  panel.style.display = isOpen ? 'none' : 'block';
+  if (!isOpen) {
+    const key = getApiKey();
+    const input = document.getElementById('api-key-input');
+    if (input && key) input.value = key;
+    updateApiKeyStatus();
+  }
+}
+
+function updateApiKeyStatus() {
+  const key = getApiKey();
+  const statusEl = document.getElementById('api-key-status');
+  const labelEl = document.getElementById('api-key-label');
+  if (key) {
+    const masked = key.slice(0, 6) + '••••••••' + key.slice(-4);
+    if (statusEl) { statusEl.textContent = '✅ Gemini Key 已設定：' + masked; statusEl.style.color = 'var(--accent2)'; }
+    if (labelEl) { labelEl.textContent = '✅ Gemini Key 已設定'; }
+  } else {
+    if (statusEl) { statusEl.textContent = '⚠️ 尚未設定 Gemini Key'; statusEl.style.color = 'var(--accent3)'; }
+    if (labelEl) { labelEl.textContent = '設定 Gemini Key'; }
+  }
+}
+
+// 點擊面板外關閉
+document.addEventListener('click', function(e) {
+  const panel = document.getElementById('api-key-panel');
+  const btn = document.getElementById('api-key-btn');
+  if (panel && panel.style.display !== 'none' && !panel.contains(e.target) && !btn.contains(e.target)) {
+    panel.style.display = 'none';
+  }
+});
+
+// ============================================================
 // 初始化
 // ============================================================
 renderHistory();
 loadAllMdFromStorage();
 refreshMemoryView();
+updateApiKeyStatus();
 document.getElementById('user-input').focus();
 </script>
 </body>
