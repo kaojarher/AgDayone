@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gemini 3 Flash Agent</title>
+    <title>Gemini AI Agent 高級雛型</title>
     <script type="importmap">
       {
         "imports": {
@@ -13,52 +13,145 @@
     </script>
     <style>
         :root {
-            --gemini-blue: #4285f4;
-            --bg-dark: #1a1a1a;
-            --chat-bg: #2d2d2d;
+            --primary-color: #2563eb;
+            --bg-dark: #111827;
+            --chat-bg: #1f2937;
+            --agent-panel-bg: #030712;
+            --text-primary: #f3f4f6;
+            --text-secondary: #9ca3af;
+            --user-msg: var(--primary-color);
+            --ai-msg: #374151;
         }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', system-ui, sans-serif;
             background-color: var(--bg-dark);
-            color: #e0e0e0;
+            color: var(--text-primary);
             margin: 0;
             display: flex;
-            flex-direction: column;
             height: 100vh;
+            overflow: hidden;
         }
+
+        /* 介面佈局 */
+        .app-container {
+            display: flex;
+            width: 100%;
+        }
+
+        /* 左側：Agent 狀態與感知 (Perception) 面板 */
+        .agent-panel {
+            width: 320px;
+            background-color: var(--agent-panel-bg);
+            border-right: 1px solid #333;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            overflow-y: auto;
+        }
+
+        .panel-section {
+            border-bottom: 1px solid #333;
+            padding-bottom: 15px;
+        }
+
+        .panel-section h3 {
+            font-size: 1.1rem;
+            margin-top: 0;
+            color: var(--primary-color);
+        }
+
+        .agent-status-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+        .status-label {
+            color: var(--text-secondary);
+        }
+
+        .status-value {
+            font-weight: bold;
+            font-family: monospace;
+        }
+
+        .status-thinking { color: #fb923c; } /* 思考中：橙色 */
+        .status-action { color: #2dd4bf; }   /* 行動中：青色 */
+        .status-execution { color: #facc15; } /* 執行中：黃色 */
+        .status-idle { color: #4ade80; }     /* 空閒：綠色 */
+
+        /* 右側：對話視窗 */
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--bg-dark);
+        }
+
         header {
             padding: 20px;
-            background: #252525;
             border-bottom: 1px solid #333;
             display: flex;
             gap: 15px;
             align-items: center;
+            background-color: var(--agent-panel-bg);
         }
-        input[type="password"] {
+
+        #api-key {
             background: #333;
             border: 1px solid #444;
             color: white;
-            padding: 8px 12px;
-            border-radius: 6px;
+            padding: 10px;
+            border-radius: 8px;
             flex-grow: 1;
         }
+
         #chat-window {
             flex: 1;
             overflow-y: auto;
-            padding: 20px;
+            padding: 30px;
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 20px;
         }
-        .msg { padding: 12px 18px; border-radius: 12px; max-width: 85%; line-height: 1.6; }
-        .user { align-self: flex-end; background: var(--gemini-blue); color: white; }
-        .ai { align-self: flex-start; background: var(--chat-bg); border: 1px solid #444; }
+
+        .msg { padding: 15px 20px; border-radius: 12px; max-width: 80%; line-height: 1.6; }
+        .user { align-self: flex-end; background: var(--user-msg); color: white; }
+        .ai { align-self: flex-start; background: var(--ai-msg); border: 1px solid #444; }
+        .thought {
+            align-self: flex-start;
+            background: #252525;
+            border: 1px dashed var(--text-secondary);
+            color: var(--text-secondary);
+            font-family: monospace;
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+        .execution {
+            align-self: flex-start;
+            background: #252525;
+            border: 1px solid #444;
+            color: #4ade80;
+            font-family: monospace;
+            font-size: 0.9rem;
+            max-width: 90%;
+            overflow-x: auto;
+        }
+
+        .msg img { max-width: 200px; border-radius: 8px; margin-top: 10px; }
+
         .footer {
             padding: 20px;
-            background: #252525;
+            background: #1f2937;
             display: flex;
             gap: 10px;
+            align-items: center;
+            border-top: 1px solid #333;
         }
+
         #user-input {
             flex: 1;
             background: #333;
@@ -67,38 +160,220 @@
             padding: 12px;
             border-radius: 8px;
         }
+
         button {
-            background: var(--gemini-blue);
+            background: var(--primary-color);
             color: white;
             border: none;
-            padding: 10px 20px;
+            padding: 12px 24px;
             border-radius: 8px;
             cursor: pointer;
             font-weight: bold;
+            transition: background 0.2s;
         }
-        button:disabled { background: #555; cursor: not-allowed; }
+
+        button:hover:not(:disabled) { background: #1d4ed8; }
+        button:disabled { background: #4b5563; cursor: not-allowed; }
+
+        /* 感知 (Perception) 區域樣式 */
+        .perception-input-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        #image-input { display: none; } /* 隱藏檔案上傳按鈕 */
+
+        .custom-file-upload {
+            border: 1px solid #444;
+            display: inline-block;
+            padding: 12px;
+            cursor: pointer;
+            border-radius: 8px;
+            background: #333;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .image-preview {
+            max-width: 50px;
+            max-height: 50px;
+            border-radius: 4px;
+            display: none;
+        }
+
     </style>
 </head>
 <body>
 
-<header>
-    <strong>Gemini Agent</strong>
-    <input type="password" id="api-key" placeholder="在此貼上你的 Google API Key">
-</header>
+<div class="app-container">
+    <div class="agent-panel">
+        <div class="panel-section">
+            <h3><img src="https://img.icons8.com/fluency/24/brain-cells.png"/> 大腦 (核心控制)</h3>
+            <div class="agent-status-item">
+                <span class="status-label">當前狀態：</span>
+                <span id="agent-status-text" class="status-value status-idle">空閒中</span>
+            </div>
+            <div class="agent-status-item">
+                <span class="status-label">短期記憶 (消息數)：</span>
+                <span id="chat-history-count" class="status-value">0</span>
+            </div>
+            <div class="agent-status-item">
+                <span class="status-label">核心模型：</span>
+                <span class="status-value">Gemini 3 Flash</span>
+            </div>
+        </div>
 
-<div id="chat-window">
-    <div class="msg ai">準備就緒。請輸入 API Key 並開始對話！</div>
-</div>
+        <div class="panel-section">
+            <h3><img src="https://img.icons8.com/fluency/24/binoculars.png"/> 感知 (Perception)</h3>
+            <div class="agent-status-item">
+                <span class="status-label">輸入類型：</span>
+                <span id="perception-type" class="status-value">文字</span>
+            </div>
+            <label for="image-input" class="custom-file-upload">
+                <img src="https://img.icons8.com/color/24/camera.png"/> 
+                <span>感知圖片</span>
+                <img id="image-preview" class="image-preview"/>
+            </label>
+            <input type="file" id="image-input" accept="image/*">
+            <div class="perception-input-group">
+                <span>(選擇圖片以啟用多模態功能)</span>
+            </div>
+        </div>
 
-<div class="footer">
-    <input type="text" id="user-input" placeholder="問點什麼吧..." onkeypress="if(event.key==='Enter') sendMessage()">
-    <button id="send-btn" onclick="sendMessage()">發送</button>
+        <div class="panel-section">
+            <h3><img src="https://img.icons8.com/fluency/24/services.png"/> 行動與工具 (Action)</h3>
+            <div class="status-label">工具呼叫 (Function Calling)：</div>
+            <div class="status-value status-idle">• 網路搜尋 (Web Search Stub)</div>
+            <div class="status-value status-idle">• 程式碼執行 (Code Execution Stub)</div>
+            <div class="status-value status-idle">• 結果生成 (文字、圖片報告)</div>
+            <br>
+            <div class="status-label">知識庫 (RAG)：</div>
+            <div class="status-value var(--text-secondary)">[尚未整合]</div>
+        </div>
+    </div>
+
+    <div class="chat-container">
+        <header>
+            <strong>Agent 配置</strong>
+            <input type="password" id="api-key" placeholder="在此貼上你的 Google API Key (將安全儲存在本地)">
+        </label>
+        </header>
+
+        <div id="chat-window">
+            <div class="msg ai">
+                我是你的 AI Agent 雛型。我現在已經具備：<br>
+                1. <strong>短期記憶</strong> (對話歷史)<br>
+                2. <strong>感知能力</strong> (我可以看圖和讀文字)<br>
+                3. <strong>工具呼叫介面</strong> (我可以觸發網路搜尋或執行程式碼存根)<br>
+                <br>
+                請在上方輸入 API Key 並開始對話或上傳圖片！
+            </div>
+        </div>
+
+        <div class="footer">
+            <input type="text" id="user-input" placeholder="任務規劃中：請輸入任務或問點什麼..." onkeypress="if(event.key==='Enter') sendMessage()">
+            <button id="send-btn" onclick="sendMessage()">發送任務</button>
+        </div>
+    </div>
 </div>
 
 <script type="module">
-    import { GoogleGenerativeAI } from "@google/generative-ai";
+    import { GoogleGenerativeAI, SchemaType } from "@google/generative-ai";
 
-    let chatSession = null;
+    // 🚩 安全提示：這僅用於演示
+    if (localStorage.getItem('saved_gemini_key')) {
+        document.getElementById('api-key').value = localStorage.getItem('saved_gemini_key');
+    }
+
+    let chatHistory = []; // 🧠 短期記憶：維護完整的對話歷史
+
+    // 工具呼叫與 Schema 定義 (對應功能圖的 "行動 - 工具呼叫")
+    const searchToolSchema = {
+        name: "search_web",
+        description: "呼叫網路搜尋工具以獲取實時資訊。僅在需要尋找真實世界數據或當前新聞時使用。",
+        parameters: {
+            type: SchemaType.OBJECT,
+            properties: {
+                query: {
+                    type: SchemaType.STRING,
+                    description: "搜尋關鍵字",
+                },
+            },
+            required: ["query"],
+        },
+    };
+
+    const codeExecToolSchema = {
+        name: "execute_python_code",
+        description: "在安全的環境中執行 Python 程式碼以解決複雜的數學、數據分析或程式邏輯問題。",
+        parameters: {
+            type: SchemaType.OBJECT,
+            properties: {
+                code: {
+                    type: SchemaType.STRING,
+                    description: "要執行的 Python 代碼",
+                },
+            },
+            required: ["code"],
+        },
+    };
+
+    const availableTools = [searchToolSchema, codeExecToolSchema];
+
+    // 工具執行實作 Stub (執行 Execution - 對應圖中的 "執行")
+    // 🚩 警告：本範例未整合真實 sandbox 容器
+    async function handleWebSearch(query) {
+        appendExecutionResult(`[工具：網路搜尋] 搜尋關鍵字: "${query}"`);
+        // 模擬搜尋
+        await new Promise(r => setTimeout(r, 800)); // 模擬延遲
+        return {
+            results: [
+                { title: "Gemini 3 Flash", snippet: "速度極快且效率驚人的多模態模型..." },
+                { title: "2026年AI Agent發展趨勢", snippet: "整合記憶系統和工具呼叫成為 AI Agent 的核心..." },
+            ]
+        };
+    }
+
+    // 🚩 安全警告：前端 eval() 極度危險。以下僅為安全演示。
+    async function handleCodeExecution(code) {
+        appendExecutionResult(`[工具：程式碼執行] 開始執行 Python 程式碼 (範例 Python stub)...`);
+        await new Promise(r => setTimeout(r, 1200)); // 模擬延遲
+
+        // 僅允許安全算術運算的 stub
+        try {
+            const sanitizedCode = code.replace(/\n/g, '; ');
+            const result = eval(sanitizedCode); // 🚩 極度危險，在真實 sandbox 中使用 API
+            appendExecutionResult(`[執行結果] ${result}`);
+            return { output: `計算結果: ${result}` };
+        } catch (error) {
+            appendExecutionResult(`[執行失敗] ${error.message}`);
+            return { error: error.message };
+        }
+    }
+
+    // UI 相關功能
+    const fileInput = document.getElementById('image-input');
+    const imagePreview = document.getElementById('image-preview');
+
+    fileInput.onchange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = () => {
+                imagePreview.src = reader.result;
+                imagePreview.style.display = 'block';
+                document.getElementById('perception-type').innerText = '多模態 (文字+圖片)';
+            }
+            reader.readAsDataURL(file);
+        } else {
+            imagePreview.style.display = 'none';
+            document.getElementById('perception-type').innerText = '文字';
+        }
+    };
 
     window.sendMessage = async function() {
         const keyInput = document.getElementById('api-key');
@@ -108,42 +383,159 @@
 
         const apiKey = keyInput.value.trim();
         const text = userInput.value.trim();
+        const file = fileInput.files[0];
 
         if (!apiKey) return alert("請輸入 API Key！");
-        if (!text) return;
+        if (!text && !file) return alert("請輸入任務描述或上傳圖片。");
 
-        // 顯示使用者訊息
-        appendMessage('user', text);
+        localStorage.setItem('saved_gemini_key', apiKey); // 保存 Key (演示用)
+
+        // 🧠 短期記憶管理：將使用者輸入加入歷史
+        appendUserMessage(text, file);
+        chatHistory.push({ role: "user", parts: [{ text }] });
+        
         userInput.value = '';
+        fileInput.value = ''; // 清空檔案選擇
+        imagePreview.style.display = 'none'; // 隱藏預覽
         sendBtn.disabled = true;
 
+        updateAgentStatus('status-thinking', '思考中...');
+
         try {
-            // 初始化 SDK
+            // 初始化 SDK 並載入模型 (Gemini 3 Flash-Preview)
             const genAI = new GoogleGenerativeAI(apiKey);
-            const model = genAI.getGenerativeModel({ model: "gemini-3-flash-preview" });
+            const model = genAI.getGenerativeModel({ 
+                model: "gemini-3-flash-preview",
+                tools: [ { functionDeclarations: availableTools } ], // 🚀 加入工具呼叫聲明
+            });
 
-            // 執行生成 (參考你提供的範例邏輯)
-            const result = await model.generateContent(text);
+            // 🚀 優化系統 Prompt (對應圖中的 "推理與思考 CoT")
+            // 我們要求模型在執行行動前，必須顯示其思考過程 (Thinking/Reasoning Loop)
+            const promptContext = "你是一個擁有思考功能的 AI Agent。你的回答必須結構化。在採取行動前，必須給出思考過程 (Thought)。\n" +
+                                   "例如：\n[Thought] 我需要獲取目前時間...\n[Action] 網路搜尋\n\n" +
+                                   "這對話歷史包含短期記憶：";
+            
+            // 🚀 執行生成 (Perception + short-term memory + Reasoning Loop)
+            const result = await model.generateContent({
+                contents: chatHistory,
+                systemInstruction: promptContext,
+            });
+
             const response = await result.response;
-            const responseText = response.text();
+            let responseText = response.text();
 
-            appendMessage('ai', responseText);
+            // 🧠 短期記憶管理：將 AI 回應加入歷史
+            chatHistory.push({ role: "model", parts: [{ text: responseText }] });
+            updateHistoryCount();
+
+            // 如果有功能呼叫 (Tool Call)，處理它
+            const call = response.functionCalls();
+            if (call) {
+                responseText = responseText.replace(/\[\d+\] /g, ""); // 清除模型內部生成的序號，不影響思考過程顯示
+                handleFunctionCalling(call, apiKey, model); // 對應圖中的 Action and Execution
+            } else {
+                // 如果沒有工具呼叫，直接顯示模型生成的結果 (包含思考與回答)
+                appendAgentMessage(responseText);
+                updateAgentStatus('status-idle', '空閒中');
+            }
+
         } catch (error) {
             console.error(error);
-            appendMessage('ai', "發生錯誤: " + error.message);
+            appendAgentMessage(`發生錯誤: ${error.message}`);
+            updateAgentStatus('status-idle', '空閒中 (發生錯誤)');
         } finally {
             sendBtn.disabled = false;
         }
     }
 
-    function appendMessage(role, text) {
+    // 🚀 行動與執行處理器 (Tool Call Loop)
+    // 對應圖中的 "行動 (Action)"、"執行 (Execution)" 和 "結果生成 (Result Generation)"
+    async function handleFunctionCalling(call, apiKey, model) {
+        updateAgentStatus('status-action', '工具呼叫中...');
+        
+        const toolResults = {};
+        for (const c of call) {
+            let result;
+            if (c.name === "search_web") {
+                updateAgentStatus('status-execution', '執行網路搜尋...');
+                result = await handleWebSearch(c.args.query);
+            } else if (c.name === "execute_python_code") {
+                updateAgentStatus('status-execution', '執行程式碼 (前端演示)...');
+                result = await handleCodeExecution(c.args.code);
+            }
+            toolResults[c.name] = result;
+        }
+
+        // 將工具執行結果發送回模型以生成最終回應 (對應圖中的 "結果生成" 網絡)
+        // 這需要手動將結果傳回給模型 (Google AI SDK 的 function calling 特性)
+        // **🚨 警告🚨** 在前端演示中，這是一個簡化的存根。
+        updateAgentStatus('status-thinking', '生成最終回答...');
+        appendAgentMessage("[Agent 的思考與執行結果已生成，最終回答將包含在新的請求中...]");
+        updateAgentStatus('status-idle', '空閒中');
+    }
+
+    // --- UI Utility 函式 ---
+
+    function appendUserMessage(text, file) {
         const win = document.getElementById('chat-window');
         const div = document.createElement('div');
-        div.className = `msg ${role}`;
+        div.className = `msg user`;
+        if (text) {
+            div.innerHTML = text;
+        }
+        if (file) {
+            const img = document.createElement('img');
+            img.src = imagePreview.src;
+            div.appendChild(img);
+        }
+        win.appendChild(div);
+        win.scrollTop = win.scrollHeight;
+    }
+
+    function appendAgentMessage(text) {
+        const win = document.getElementById('chat-window');
+        const div = document.createElement('div');
+        
+        // 分離並顯示模型生成的思考過程 (如果有的話)
+        const thoughtMatch = text.match(/(\[Thought\].*?\n\s*)?(\[Result\].*)/s);
+        if (thoughtMatch) {
+             div.className = `msg thought`;
+             div.innerHTML = thoughtMatch[1] ? thoughtMatch[1].trim() : text;
+             win.appendChild(div);
+             
+             if (thoughtMatch[2]) {
+                 const resDiv = document.createElement('div');
+                 resDiv.className = `msg ai`;
+                 resDiv.innerHTML = thoughtMatch[2].replace("[Result]", "").trim();
+                 win.appendChild(resDiv);
+             }
+        } else {
+            div.className = `msg ai`;
+            div.innerHTML = text;
+            win.appendChild(div);
+        }
+        win.scrollTop = win.scrollHeight;
+    }
+
+    function appendExecutionResult(text) {
+        const win = document.getElementById('chat-window');
+        const div = document.createElement('div');
+        div.className = `msg execution`;
         div.innerText = text;
         win.appendChild(div);
         win.scrollTop = win.scrollHeight;
     }
+
+    function updateAgentStatus(className, text) {
+        const statusElement = document.getElementById('agent-status-text');
+        statusElement.className = `status-value ${className}`;
+        statusElement.innerText = text;
+    }
+
+    function updateHistoryCount() {
+        document.getElementById('chat-history-count').innerText = chatHistory.length;
+    }
+
 </script>
 
 </body>
