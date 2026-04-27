@@ -840,6 +840,91 @@
     transition: all 0.2s;
   }
   .clear-btn:hover { color: var(--accent4); border-color: rgba(252,129,129,0.3); }
+
+  /* ===== MD EDITOR ===== */
+  .md-editor-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+
+  .md-btn-group {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+    margin-top: 4px;
+  }
+
+  .md-btn {
+    padding: 5px 12px;
+    border-radius: 7px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--surface3);
+    color: var(--text-muted);
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+
+  .md-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+
+  .md-btn-export {
+    border-color: rgba(118,228,196,0.3);
+    color: var(--accent2);
+    background: rgba(118,228,196,0.06);
+  }
+  .md-btn-export:hover { background: rgba(118,228,196,0.14); }
+
+  .md-btn-save {
+    border-color: rgba(99,179,237,0.35);
+    color: var(--accent);
+    background: rgba(99,179,237,0.08);
+  }
+  .md-btn-save:hover { background: rgba(99,179,237,0.18); }
+
+  .md-textarea {
+    width: 100%;
+    flex: 1;
+    min-height: calc(100vh - 280px);
+    background: var(--surface3);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    color: var(--accent2);
+    font-family: var(--mono);
+    font-size: 12.5px;
+    line-height: 1.75;
+    resize: vertical;
+    outline: none;
+    transition: border-color 0.2s;
+    tab-size: 2;
+  }
+
+  .md-textarea:focus { border-color: var(--border-accent); }
+
+  .md-status {
+    font-size: 11px;
+    font-family: var(--mono);
+    color: var(--text-dim);
+    margin-top: 6px;
+    padding: 0 4px;
+  }
+  .md-status.saved { color: var(--accent2); }
+  .md-status.modified { color: var(--accent3); }
+
+  .sp-view { display: flex; flex-direction: column; }
+
+  @media (max-width: 700px) {
+    .md-textarea { min-height: 300px; font-size: 12px; }
+    .md-btn { padding: 5px 9px; font-size: 11px; }
+    .md-editor-header { flex-direction: column; gap: 8px; }
+    .md-btn-group { width: 100%; justify-content: flex-end; }
+  }
 </style>
 </head>
 <body>
@@ -854,11 +939,11 @@
       </svg>
       AI Agent Studio
     </div>
-    <span class="topbar-tag">v0.3 · MCP</span>
+    <span class="topbar-tag">v0.4 · Perception→Brain→Action</span>
     <div class="topbar-spacer"></div>
     <div class="topbar-status">
       <span class="status-dot"></span>
-      Google Search 已連線
+      Google AI Mode 已連線
     </div>
     <button class="ext-btn" id="ext-dl-top" onclick="downloadExtension()">
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
@@ -877,30 +962,49 @@
     <div class="sidebar-section">身分模組</div>
     <div class="nav-item" onclick="switchNav(this,'soul')">
       <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
-      SOUL.md
-      <span class="file-tag">.md</span>
+      SOUL.md <span class="file-tag">.md</span>
     </div>
     <div class="nav-item" onclick="switchNav(this,'identity')">
       <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-      IDENTITY.md
-      <span class="file-tag">.md</span>
+      IDENTITY.md <span class="file-tag">.md</span>
     </div>
     <div class="nav-item" onclick="switchNav(this,'user')">
-      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-      USER.md
-      <span class="file-tag">.md</span>
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+      USER.md <span class="file-tag">.md</span>
     </div>
     <div class="nav-item" onclick="switchNav(this,'memory')">
       <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
-      MEMORY.md
-      <span class="file-tag">.md</span>
+      MEMORY.md <span class="file-tag">.md</span>
     </div>
 
-    <div class="sidebar-section">Agent 工具</div>
+    <div class="sidebar-section">感知 Perception</div>
     <div class="nav-item active" onclick="switchNav(this,'chat')">
       <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-      Agent 對話
-      <span class="nav-badge">LIVE</span>
+      Agent 對話 <span class="nav-badge">LIVE</span>
+    </div>
+    <div class="nav-item" onclick="switchNav(this,'perception')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+      感知層設定
+    </div>
+
+    <div class="sidebar-section">大腦 Brain</div>
+    <div class="nav-item" onclick="switchNav(this,'brain-plan')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      任務規劃
+    </div>
+    <div class="nav-item" onclick="switchNav(this,'brain-memory')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+      記憶系統
+    </div>
+    <div class="nav-item" onclick="switchNav(this,'brain-reason')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      推理與思考
+    </div>
+
+    <div class="sidebar-section">行動 Action</div>
+    <div class="nav-item" onclick="switchNav(this,'action')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      行動 / 執行層
     </div>
     <div class="nav-item" onclick="switchNav(this,'system')">
       <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
@@ -918,8 +1022,7 @@
     <div class="sidebar-section">模型行為</div>
     <div class="nav-item" onclick="switchNav(this,'agents')">
       <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
-      AGENTS.md
-      <span class="nav-badge">SKILL</span>
+      AGENTS.md <span class="nav-badge">SKILL</span>
     </div>
   </nav>
 
@@ -932,21 +1035,21 @@
         <div class="msg-avatar agent">AI</div>
         <div class="chat-header-info">
           <h2>Google Search Agent</h2>
-          <p>透過 MCP 協定取得網頁內容 · udm=14 精準模式</p>
+          <p>透過 MCP 協定取得網頁內容 · udm=50 AI Mode</p>
         </div>
         <button class="clear-btn" onclick="clearChat()">清除對話</button>
       </div>
 
       <div class="pipeline-bar" id="pipeline">
-        <div class="pipeline-step" id="ps-input">輸入</div>
+        <div class="pipeline-step" id="ps-input">👁 感知</div>
         <span class="pipeline-arrow">›</span>
-        <div class="pipeline-step" id="ps-search">Google Search</div>
+        <div class="pipeline-step" id="ps-search">🧠 任務規劃</div>
         <span class="pipeline-arrow">›</span>
-        <div class="pipeline-step" id="ps-mcp">MCP 擷取</div>
+        <div class="pipeline-step" id="ps-mcp">💾 記憶系統</div>
         <span class="pipeline-arrow">›</span>
-        <div class="pipeline-step" id="ps-llm">LLM 分析</div>
+        <div class="pipeline-step" id="ps-llm">⚡ 推理思考</div>
         <span class="pipeline-arrow">›</span>
-        <div class="pipeline-step" id="ps-output">輸出</div>
+        <div class="pipeline-step" id="ps-output">🎯 行動執行</div>
       </div>
 
       <div class="chat-messages" id="chat-messages">
@@ -954,8 +1057,8 @@
           <div class="msg-avatar agent">AI</div>
           <div>
             <div class="msg-bubble">
-              <p>👋 你好！我是 <strong>AI Agent</strong>，內建 Google Search MCP 工具。</p>
-              <p>我會透過 <code>udm=14</code> 精準搜尋模式查詢，並以 MCP 協定擷取網頁內容給你。</p>
+              <p>👋 你好！我是 <strong>初一 Agent</strong>，內建 Google AI Mode 工具。</p>
+              <p>我會透過 <code>udm=50</code> AI Mode 查詢，並以 MCP 協定擷取網頁內容給你。</p>
               <p>請輸入任何問題，我來幫你搜尋分析！</p>
             </div>
             <div class="msg-time">系統就緒</div>
@@ -965,19 +1068,37 @@
 
       <div class="chat-input-area">
         <div class="input-toolbar">
-          <div class="tool-chip active-tool" id="chip-search" onclick="toggleTool('search')">
+          <div class="tool-chip active-tool" id="chip-ai" onclick="setMode('ai')">
             <span class="tool-chip-dot"></span>
-            Google Search
+            🟣 AI Mode (udm=50)
           </div>
-          <div class="tool-chip" id="chip-mcp" onclick="toggleTool('mcp')">
+          <div class="tool-chip" id="chip-mixed" onclick="setMode('mixed')">
             <span class="tool-chip-dot"></span>
-            MCP 擷取
+            ⚪ 混合模式
           </div>
-          <div class="tool-chip" id="chip-deep" onclick="toggleTool('deep')">
+          <div class="tool-chip" id="chip-web" onclick="setMode('web')">
             <span class="tool-chip-dot"></span>
-            深度分析
+            🔵 傳統模式 (udm=14)
+          </div>
+          <div class="tool-chip" id="chip-paste" onclick="togglePasteMode()" style="margin-left:auto;border-color:rgba(246,173,85,0.3);color:var(--accent3)">
+            <span class="tool-chip-dot" style="background:var(--accent3)"></span>
+            📋 貼入搜尋結果
           </div>
         </div>
+
+        <!-- 貼入模式面板 -->
+        <div id="paste-panel" style="display:none;margin-bottom:8px;background:var(--surface3);border:1px solid rgba(246,173,85,0.25);border-radius:10px;padding:10px 12px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+            <span style="font-size:11px;font-weight:600;color:var(--accent3)">📋 手動貼入搜尋結果 — Agent 將判斷是否完成任務</span>
+            <button onclick="togglePasteMode()" style="background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:14px;line-height:1">✕</button>
+          </div>
+          <textarea id="paste-content" placeholder="將從 Google 複製的搜尋結果文字貼在這裡，Agent 會分析內容並判斷任務是否完成…" style="width:100%;min-height:80px;max-height:160px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-family:var(--font);font-size:12.5px;resize:vertical;outline:none;line-height:1.6;" oninput="autoResize(this)"></textarea>
+          <div style="display:flex;gap:8px;margin-top:8px;align-items:center;">
+            <span style="font-size:11px;color:var(--text-muted);flex:1">搭配上方問題一起送出，或單獨讓 Agent 分析此內容</span>
+            <button onclick="submitWithPaste()" style="padding:6px 14px;background:linear-gradient(135deg,rgba(246,173,85,0.25),rgba(246,173,85,0.1));border:1px solid rgba(246,173,85,0.4);border-radius:8px;color:var(--accent3);font-size:12px;font-weight:600;cursor:pointer;">送出分析</button>
+          </div>
+        </div>
+
         <div class="input-row">
           <textarea class="input-box" id="user-input" placeholder="輸入問題，Agent 將自動 Google 搜尋並分析..." rows="1"
             onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
@@ -1016,7 +1137,9 @@
             </div>
             <div class="sp-card-desc">定義有哪些工具可用，以及怎麼用</div>
             <div class="sp-file-list">
-              <div class="sp-file">Google Search (udm=14)</div>
+              <div class="sp-file">Google AI Mode (udm=50)</div>
+              <div class="sp-file">Google 混合模式（預設）</div>
+              <div class="sp-file">Google 傳統模式 (udm=14)</div>
               <div class="sp-file">MCP 網頁擷取</div>
               <div class="sp-file">Chrome Extension</div>
             </div>
@@ -1067,7 +1190,7 @@
           <div class="flow-steps">
             <div class="flow-step user-step">用戶輸入<div class="flow-step-sub">問題 / 指令</div></div>
             <span class="flow-arrow-icon">→</span>
-            <div class="flow-step google-step">Google Search<div class="flow-step-sub">udm=14 精準模式</div></div>
+            <div class="flow-step google-step">Google AI Mode<div class="flow-step-sub">udm=50 / 50 / 14</div></div>
             <span class="flow-arrow-icon">→</span>
             <div class="flow-step ext-step">Chrome Extension<div class="flow-step-sub">MCP 擷取頁面</div></div>
             <span class="flow-arrow-icon">→</span>
@@ -1075,7 +1198,7 @@
           </div>
 
           <div class="code-block" style="margin-top:16px"><span class="code-comment">// Google Search URL 格式</span>
-<span class="code-key">const</span> searchUrl = <span class="code-str">`https://www.google.com/search?q=<span style="color:var(--accent4)">${encodeURIComponent(query)}</span>&udm=14`</span>;
+<span class="code-key">const</span> searchUrl = <span class="code-str">`https://www.google.com/search?q=<span style="color:var(--accent4)">${encodeURIComponent(query)}</span>&udm=50`</span>; <span class="code-comment">// AI Mode</span>
 
 <span class="code-comment">// MCP 協定擷取網頁內容</span>
 <span class="code-key">const</span> mcpResult = <span class="code-key">await</span> <span class="code-fn">mcpFetch</span>({ url: searchUrl, type: <span class="code-str">'search_results'</span> });
@@ -1160,12 +1283,21 @@
       </div>
     </div>
 
-    <!-- IDENTITY TABS (soul/identity/user/memory/agents) -->
+    <!-- IDENTITY TABS (soul/identity/user/memory/agents) — 可編輯 + 匯入匯出 -->
     <div class="tab-view" id="tab-soul">
       <div class="sp-view">
-        <div class="sp-title">SOUL.md — 靈魂定義</div>
-        <div class="sp-subtitle"># 定義 Agent 的核心價值觀與人格特質</div>
-        <div class="code-block"># SOUL.md
+        <div class="md-editor-header">
+          <div>
+            <div class="sp-title">SOUL.md — 靈魂定義</div>
+            <div class="sp-subtitle"># 定義 Agent 的核心價值觀與人格特質</div>
+          </div>
+          <div class="md-btn-group">
+            <button class="md-btn" onclick="importMd('soul')">📂 匯入</button>
+            <button class="md-btn md-btn-export" onclick="exportMd('soul','SOUL.md')">💾 匯出</button>
+            <button class="md-btn md-btn-save" onclick="saveMd('soul')">✅ 儲存</button>
+          </div>
+        </div>
+        <textarea class="md-textarea" id="md-soul" spellcheck="false"># SOUL.md
 
 ## 核心使命
 我是一個追求真相的 AI Agent。
@@ -1179,23 +1311,36 @@
 ## 溝通風格
 - 清晰、直接、不廢話
 - 使用具體例子說明抽象概念
-- 主動提出 follow-up 問題</div>
+- 主動提出 follow-up 問題</textarea>
+        <div class="md-status" id="status-soul">尚未儲存</div>
+        <input type="file" id="file-soul" accept=".md,.txt" style="display:none" onchange="loadMdFile(event,'soul')">
       </div>
     </div>
 
     <div class="tab-view" id="tab-identity">
       <div class="sp-view">
-        <div class="sp-title">IDENTITY.md — 身分定義</div>
-        <div class="sp-subtitle"># Agent 的角色與能力邊界</div>
-        <div class="code-block"># IDENTITY.md
+        <div class="md-editor-header">
+          <div>
+            <div class="sp-title">IDENTITY.md — 身分定義</div>
+            <div class="sp-subtitle"># Agent 的角色與能力邊界</div>
+          </div>
+          <div class="md-btn-group">
+            <button class="md-btn" onclick="importMd('identity')">📂 匯入</button>
+            <button class="md-btn md-btn-export" onclick="exportMd('identity','IDENTITY.md')">💾 匯出</button>
+            <button class="md-btn md-btn-save" onclick="saveMd('identity')">✅ 儲存</button>
+          </div>
+        </div>
+        <textarea class="md-textarea" id="md-identity" spellcheck="false"># IDENTITY.md
 
 ## 我是誰
 名稱：初一 Agent
-角色：Google Search + MCP 資料擷取助理
+角色：Google AI Mode + MCP 資料擷取助理
 版本：0.3-mcp
 
 ## 能力清單
-- [x] Google Search (udm=14 精準模式)
+- [x] Google AI Mode (udm=50) — 純 AI 生成回覆
+- [x] Google 混合模式 — AI Overview + 傳統結果
+- [x] Google 傳統模式 (udm=14) — 純網頁連結
 - [x] MCP 協定網頁內容擷取
 - [x] 多輪對話記憶
 - [x] 結構化資料分析
@@ -1204,15 +1349,26 @@
 
 ## 限制
 - 無法存取需登入的頁面
-- 不儲存個人敏感資料</div>
+- 不儲存個人敏感資料</textarea>
+        <div class="md-status" id="status-identity">尚未儲存</div>
+        <input type="file" id="file-identity" accept=".md,.txt" style="display:none" onchange="loadMdFile(event,'identity')">
       </div>
     </div>
 
     <div class="tab-view" id="tab-user">
       <div class="sp-view">
-        <div class="sp-title">USER.md — 使用者設定</div>
-        <div class="sp-subtitle"># 當前使用者的偏好與背景</div>
-        <div class="code-block"># USER.md
+        <div class="md-editor-header">
+          <div>
+            <div class="sp-title">USER.md — 使用者設定</div>
+            <div class="sp-subtitle"># 當前使用者的偏好與背景</div>
+          </div>
+          <div class="md-btn-group">
+            <button class="md-btn" onclick="importMd('user')">📂 匯入</button>
+            <button class="md-btn md-btn-export" onclick="exportMd('user','USER.md')">💾 匯出</button>
+            <button class="md-btn md-btn-save" onclick="saveMd('user')">✅ 儲存</button>
+          </div>
+        </div>
+        <textarea class="md-textarea" id="md-user" spellcheck="false"># USER.md
 
 ## 使用者基本資料
 地區：台南，台灣
@@ -1225,15 +1381,26 @@
 - 引用格式：提供來源連結
 
 ## 人生目標
-深耕 AI 工具應用，建立自主的 Agent 工作流程。</div>
+深耕 AI 工具應用，建立自主的 Agent 工作流程。</textarea>
+        <div class="md-status" id="status-user">尚未儲存</div>
+        <input type="file" id="file-user" accept=".md,.txt" style="display:none" onchange="loadMdFile(event,'user')">
       </div>
     </div>
 
     <div class="tab-view" id="tab-memory">
       <div class="sp-view">
-        <div class="sp-title">MEMORY.md — 記憶模組</div>
-        <div class="sp-subtitle"># 跨對話記憶儲存位置與格式</div>
-        <div class="code-block"># MEMORY.md
+        <div class="md-editor-header">
+          <div>
+            <div class="sp-title">MEMORY.md — 記憶模組</div>
+            <div class="sp-subtitle"># 跨對話記憶儲存位置與格式</div>
+          </div>
+          <div class="md-btn-group">
+            <button class="md-btn" onclick="importMd('memory')">📂 匯入</button>
+            <button class="md-btn md-btn-export" onclick="exportMd('memory','MEMORY.md')">💾 匯出</button>
+            <button class="md-btn md-btn-save" onclick="saveMd('memory')">✅ 儲存</button>
+          </div>
+        </div>
+        <textarea class="md-textarea" id="md-memory" spellcheck="false"># MEMORY.md
 
 ## 記憶儲存策略
 短期記憶：當前對話 context window
@@ -1251,20 +1418,31 @@
   type: "fact|preference|task",
   content: "...",
   importance: 1-10
-}</div>
+}</textarea>
+        <div class="md-status" id="status-memory">尚未儲存</div>
+        <input type="file" id="file-memory" accept=".md,.txt" style="display:none" onchange="loadMdFile(event,'memory')">
       </div>
     </div>
 
     <div class="tab-view" id="tab-agents">
       <div class="sp-view">
-        <div class="sp-title">AGENTS.md — 模型行為</div>
-        <div class="sp-subtitle"># 規範 Agent 的決策流程與工具呼叫邏輯</div>
-        <div class="code-block"># AGENTS.md
+        <div class="md-editor-header">
+          <div>
+            <div class="sp-title">AGENTS.md — 模型行為</div>
+            <div class="sp-subtitle"># 規範 Agent 的決策流程與工具呼叫邏輯</div>
+          </div>
+          <div class="md-btn-group">
+            <button class="md-btn" onclick="importMd('agents')">📂 匯入</button>
+            <button class="md-btn md-btn-export" onclick="exportMd('agents','AGENTS.md')">💾 匯出</button>
+            <button class="md-btn md-btn-save" onclick="saveMd('agents')">✅ 儲存</button>
+          </div>
+        </div>
+        <textarea class="md-textarea" id="md-agents" spellcheck="false"># AGENTS.md
 
 ## 決策流程
 1. 理解用戶意圖 → 分解子任務
 2. 判斷是否需要搜尋 (信心度 < 90% → 搜尋)
-3. 建構 Google Search URL (udm=14)
+3. 建構 Google Search URL (預設 udm=50 AI Mode)
 4. 呼叫 MCP 擷取結果
 5. 整合資訊 → 生成回覆
 
@@ -1276,20 +1454,258 @@
 ## 輸出格式
 - 問答：直接回答 + 來源連結
 - 分析：結構化 Markdown
-- 不確定：明確說明「資料不足」</div>
+- 不確定：明確說明「資料不足」</textarea>
+        <div class="md-status" id="status-agents">尚未儲存</div>
+        <input type="file" id="file-agents" accept=".md,.txt" style="display:none" onchange="loadMdFile(event,'agents')">
       </div>
     </div>
 
-  </main>
+    <!-- ===== 感知層 PERCEPTION ===== -->
+    <div class="tab-view" id="tab-perception">
+      <div class="sp-view" style="padding:20px;overflow-y:auto;flex:1">
+        <div class="sp-title">感知層 Perception</div>
+        <div class="sp-subtitle"># 接收外部資訊的三種輸入管道</div>
+        <div class="sp-grid" style="margin-top:16px">
+          <div class="sp-card" style="border-color:rgba(99,179,237,0.3)">
+            <div class="sp-card-header"><div class="sp-card-icon" style="background:rgba(99,179,237,0.15)">👤</div><div class="sp-card-title">使用者輸入</div></div>
+            <div class="sp-card-desc">文字、語音、圖片等多模態輸入</div>
+            <div class="sp-file-list">
+              <div class="sp-file">文字問題 / 指令</div>
+              <div class="sp-file">📋 貼入搜尋結果（手機模式）</div>
+              <div class="sp-file">🖼 圖片上傳（多模態）</div>
+            </div>
+          </div>
+          <div class="sp-card" style="border-color:rgba(118,228,196,0.3)">
+            <div class="sp-card-header"><div class="sp-card-icon" style="background:rgba(118,228,196,0.15)">🌐</div><div class="sp-card-title">外部環境數據</div></div>
+            <div class="sp-card-desc">API、傳感器、web 網頁</div>
+            <div class="sp-file-list">
+              <div class="sp-file">Google Search (udm=50/14)</div>
+              <div class="sp-file">MCP 網頁擷取</div>
+              <div class="sp-file">Chrome Extension</div>
+            </div>
+          </div>
+          <div class="sp-card" style="border-color:rgba(183,148,244,0.3)">
+            <div class="sp-card-header"><div class="sp-card-icon" style="background:rgba(183,148,244,0.15)">📄</div><div class="sp-card-title">文件解析</div></div>
+            <div class="sp-card-desc">結構化文件輸入處理</div>
+            <div class="sp-file-list">
+              <div class="sp-file">System Prompt .md 匯入</div>
+              <div class="sp-file">貼入文字解析</div>
+              <div class="sp-file">搜尋結果結構化</div>
+            </div>
+          </div>
+        </div>
+        <div class="mcp-flow" style="margin-top:16px">
+          <div class="mcp-flow-title">感知層 → 大腦 資料流</div>
+          <div class="flow-steps">
+            <div class="flow-step user-step">使用者輸入<div class="flow-step-sub">文字/圖片/貼入</div></div>
+            <span class="flow-arrow-icon">→</span>
+            <div class="flow-step google-step">外部環境<div class="flow-step-sub">Google / MCP</div></div>
+            <span class="flow-arrow-icon">→</span>
+            <div class="flow-step ext-step">文件解析<div class="flow-step-sub">結構化處理</div></div>
+            <span class="flow-arrow-icon">→</span>
+            <div class="flow-step llm-step">大腦接收<div class="flow-step-sub">任務規劃</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 大腦：任務規劃 ===== -->
+    <div class="tab-view" id="tab-brain-plan">
+      <div class="sp-view" style="padding:20px;overflow-y:auto;flex:1">
+        <div class="sp-title">大腦 — 任務規劃</div>
+        <div class="sp-subtitle"># 任務拆解 · 目標管理 · 路徑生成</div>
+        <div class="sp-grid" style="margin-top:16px">
+          <div class="sp-card" style="border-color:rgba(118,228,196,0.3)">
+            <div class="sp-card-header"><div class="sp-card-icon" style="background:rgba(118,228,196,0.15)">🔧</div><div class="sp-card-title">任務拆解</div></div>
+            <div class="sp-card-desc">將複雜問題分解為可執行的子任務序列</div>
+            <div class="sp-file-list">
+              <div class="sp-file">意圖識別</div>
+              <div class="sp-file">子任務序列生成</div>
+              <div class="sp-file">優先級排序</div>
+            </div>
+          </div>
+          <div class="sp-card" style="border-color:rgba(99,179,237,0.3)">
+            <div class="sp-card-header"><div class="sp-card-icon" style="background:rgba(99,179,237,0.15)">🎯</div><div class="sp-card-title">目標管理</div></div>
+            <div class="sp-card-desc">追蹤當前目標完成狀態</div>
+            <div class="sp-file-list">
+              <div class="sp-file">任務完成判斷</div>
+              <div class="sp-file">目標偏移偵測</div>
+              <div class="sp-file">重新規劃觸發</div>
+            </div>
+          </div>
+          <div class="sp-card" style="border-color:rgba(246,173,85,0.3)">
+            <div class="sp-card-header"><div class="sp-card-icon" style="background:rgba(246,173,85,0.15)">🗺</div><div class="sp-card-title">路徑生成</div></div>
+            <div class="sp-card-desc">決定達成目標的最佳行動路徑</div>
+            <div class="sp-file-list">
+              <div class="sp-file">工具選擇策略</div>
+              <div class="sp-file">搜尋 vs 知識庫判斷</div>
+              <div class="sp-file">回退計畫</div>
+            </div>
+          </div>
+        </div>
+        <div class="mcp-flow" style="margin-top:16px">
+          <div class="mcp-flow-title">當前任務規劃狀態</div>
+          <div id="plan-status" style="font-family:var(--mono);font-size:12px;color:var(--text-muted);line-height:1.8">尚無進行中的任務。開始對話後，任務規劃狀態將顯示於此。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 大腦：記憶系統 ===== -->
+    <div class="tab-view" id="tab-brain-memory">
+      <div class="sp-view" style="padding:20px;overflow-y:auto;flex:1">
+        <div class="sp-title">大腦 — 記憶系統</div>
+        <div class="sp-subtitle"># 短期記憶 · 長期記憶 · 知識庫 RAG · 經驗/技能</div>
+        <div class="sp-grid" style="margin-top:16px">
+          <div class="sp-card" style="border-color:rgba(99,179,237,0.3)">
+            <div class="sp-card-header"><div class="sp-card-icon" style="background:rgba(99,179,237,0.15)">⚡</div><div class="sp-card-title">短期記憶</div></div>
+            <div class="sp-card-desc">當前對話 Context Window</div>
+            <div id="short-mem-count" class="sp-file-list"><div class="sp-file">對話輪次：0</div></div>
+          </div>
+          <div class="sp-card" style="border-color:rgba(118,228,196,0.3)">
+            <div class="sp-card-header"><div class="sp-card-icon" style="background:rgba(118,228,196,0.15)">💾</div><div class="sp-card-title">長期記憶 / RAG</div></div>
+            <div class="sp-card-desc">localStorage 持久化儲存</div>
+            <div id="long-mem-list" class="sp-file-list"><div class="sp-file">載入中...</div></div>
+          </div>
+          <div class="sp-card" style="border-color:rgba(183,148,244,0.3)">
+            <div class="sp-card-header"><div class="sp-card-icon" style="background:rgba(183,148,244,0.15)">🎓</div><div class="sp-card-title">經驗記憶 / 技能</div></div>
+            <div class="sp-card-desc">已儲存的 System Prompt 模組</div>
+            <div id="skill-mem-list" class="sp-file-list"><div class="sp-file">載入中...</div></div>
+          </div>
+        </div>
+        <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+          <button class="md-btn md-btn-export" onclick="exportAllMemory()">💾 匯出全部記憶</button>
+          <button class="md-btn" style="border-color:rgba(252,129,129,0.3);color:var(--accent4)" onclick="if(confirm('確定清除所有本地記憶？'))clearAllMemory()">🗑 清除全部記憶</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 大腦：推理與思考 ===== -->
+    <div class="tab-view" id="tab-brain-reason">
+      <div class="sp-view" style="padding:20px;overflow-y:auto;flex:1">
+        <div class="sp-title">大腦 — 推理與思考</div>
+        <div class="sp-subtitle"># 思維鏈 CoT · 邏輯判斷 · 反思與優化 · 工具選擇</div>
+        <div class="sp-grid" style="margin-top:16px">
+          <div class="sp-card" style="border-color:rgba(183,148,244,0.3)">
+            <div class="sp-card-header"><div class="sp-card-icon" style="background:rgba(183,148,244,0.15)">🔗</div><div class="sp-card-title">思維鏈 CoT</div></div>
+            <div class="sp-card-desc">Chain-of-Thought 逐步推理</div>
+            <div class="sp-file-list">
+              <div class="sp-file">問題拆解步驟</div>
+              <div class="sp-file">中間推理過程</div>
+              <div class="sp-file">結論驗證</div>
+            </div>
+          </div>
+          <div class="sp-card" style="border-color:rgba(99,179,237,0.3)">
+            <div class="sp-card-header"><div class="sp-card-icon" style="background:rgba(99,179,237,0.15)">⚖️</div><div class="sp-card-title">邏輯判斷</div></div>
+            <div class="sp-card-desc">信心度評估與決策</div>
+            <div class="sp-file-list">
+              <div class="sp-file">信心度 &lt; 90% → 搜尋</div>
+              <div class="sp-file">貼入內容 → 任務完成判斷</div>
+              <div class="sp-file">衝突資訊處理</div>
+            </div>
+          </div>
+          <div class="sp-card" style="border-color:rgba(118,228,196,0.3)">
+            <div class="sp-card-header"><div class="sp-card-icon" style="background:rgba(118,228,196,0.15)">🔄</div><div class="sp-card-title">反思與優化</div></div>
+            <div class="sp-card-desc">自我評估並改進輸出</div>
+            <div class="sp-file-list">
+              <div class="sp-file">回答品質評估</div>
+              <div class="sp-file">補充搜尋觸發</div>
+              <div class="sp-file">格式優化</div>
+            </div>
+          </div>
+          <div class="sp-card" style="border-color:rgba(246,173,85,0.3)">
+            <div class="sp-card-header"><div class="sp-card-icon" style="background:rgba(246,173,85,0.15)">🛠</div><div class="sp-card-title">工具選擇</div></div>
+            <div class="sp-card-desc">動態決定呼叫哪個工具</div>
+            <div class="sp-file-list">
+              <div class="sp-file">知識庫 vs 搜尋</div>
+              <div class="sp-file">udm=50 vs udm=14</div>
+              <div class="sp-file">MCP vs 手動貼入</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 行動層 ACTION + EXECUTION ===== -->
+    <div class="tab-view" id="tab-action">
+      <div class="sp-view" style="padding:20px;overflow-y:auto;flex:1">
+        <div class="sp-title">行動層 Action + 執行 Execution</div>
+        <div class="sp-subtitle"># 工具呼叫 · 程式碼執行 · 網絡搜尋 · 結果生成</div>
+        <div class="sp-grid" style="margin-top:16px">
+          <div class="sp-card" style="border-color:rgba(246,173,85,0.3)">
+            <div class="sp-card-header"><div class="sp-card-icon" style="background:rgba(246,173,85,0.15)">⚙️</div><div class="sp-card-title">工具呼叫</div></div>
+            <div class="sp-card-desc">APIs、功能模組</div>
+            <div class="sp-file-list">
+              <div class="sp-file">Anthropic API</div>
+              <div class="sp-file">Google Search API</div>
+              <div class="sp-file">MCP Extension</div>
+            </div>
+          </div>
+          <div class="sp-card" style="border-color:rgba(118,228,196,0.3)">
+            <div class="sp-card-header"><div class="sp-card-icon" style="background:rgba(118,228,196,0.15)">💻</div><div class="sp-card-title">程式碼執行</div></div>
+            <div class="sp-card-desc">python、shell sandbox</div>
+            <div class="sp-file-list">
+              <div class="sp-file">JSZip 壓縮產生</div>
+              <div class="sp-file">localStorage 讀寫</div>
+              <div class="sp-file">Blob 檔案下載</div>
+            </div>
+          </div>
+          <div class="sp-card" style="border-color:rgba(99,179,237,0.3)">
+            <div class="sp-card-header"><div class="sp-card-icon" style="background:rgba(99,179,237,0.15)">🔍</div><div class="sp-card-title">網絡搜尋</div></div>
+            <div class="sp-card-desc">瀏覽器 / 爬蟲</div>
+            <div class="sp-file-list">
+              <div class="sp-file">🟣 AI Mode udm=50</div>
+              <div class="sp-file">⚪ 混合模式</div>
+              <div class="sp-file">🔵 傳統 udm=14</div>
+            </div>
+          </div>
+          <div class="sp-card" style="border-color:rgba(183,148,244,0.3)">
+            <div class="sp-card-header"><div class="sp-card-icon" style="background:rgba(183,148,244,0.15)">📝</div><div class="sp-card-title">結果生成</div></div>
+            <div class="sp-card-desc">文文、報告、操作輸出</div>
+            <div class="sp-file-list">
+              <div class="sp-file">Markdown 格式回覆</div>
+              <div class="sp-file">System Prompt 匯出</div>
+              <div class="sp-file">Chrome 擴充 ZIP</div>
+            </div>
+          </div>
+        </div>
+        <div class="mcp-flow" style="margin-top:16px">
+          <div class="mcp-flow-title">執行層 Execution</div>
+          <div class="flow-steps">
+            <div class="flow-step user-step">API 調用<div class="flow-step-sub">Anthropic / Google</div></div>
+            <span class="flow-arrow-icon">→</span>
+            <div class="flow-step google-step">程式碼 sandbox<div class="flow-step-sub">JS 本地執行</div></div>
+            <span class="flow-arrow-icon">→</span>
+            <div class="flow-step llm-step">操作指令<div class="flow-step-sub">下載 / 儲存 / 顯示</div></div>
+          </div>
+        </div>
+        <div class="ext-box" style="margin-top:16px">
+          <div class="ext-box-header"><div class="ext-box-title">🎯 快速行動面板</div></div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-top:4px">
+            <button class="md-btn md-btn-export" onclick="downloadExtension()" style="text-align:center;padding:10px">🧩 下載 MCP Extension</button>
+            <button class="md-btn md-btn-save" onclick="exportAllMemory()" style="text-align:center;padding:10px">💾 匯出全部記憶</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
+// ============================================================
+// 初一 Agent — 核心狀態
+// ============================================================
 const TOOLS = { search: true, mcp: false, deep: false };
+let searchMode = 'ai';
 let isProcessing = false;
+let msgCount = 0;
 let searchHistory = JSON.parse(localStorage.getItem('agentHistory') || '[]');
+const MD_KEYS = ['soul','identity','user','memory','agents'];
 
+// ============================================================
+// 導覽切換
+// ============================================================
 function switchNav(el, tab) {
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   el.classList.add('active');
@@ -1297,13 +1713,30 @@ function switchNav(el, tab) {
   const target = document.getElementById('tab-' + tab);
   if (target) target.classList.add('active');
   if (tab === 'history') renderHistory();
+  if (['brain-memory','brain-plan','brain-reason','action','perception'].includes(tab)) refreshMemoryView();
+}
+
+// ============================================================
+// 搜尋模式切換
+// ============================================================
+function setMode(mode) {
+  searchMode = mode;
+  ['ai','mixed','web'].forEach(m => {
+    document.getElementById('chip-' + m).classList.toggle('active-tool', m === mode);
+  });
+  const labels = { ai: 'Google AI Mode 已連線', mixed: 'Google 混合模式 已連線', web: 'Google 傳統模式 已連線' };
+  document.querySelector('.topbar-status').innerHTML = '<span class="status-dot"></span>' + labels[mode];
 }
 
 function toggleTool(name) {
   TOOLS[name] = !TOOLS[name];
-  document.getElementById('chip-' + name).classList.toggle('active-tool', TOOLS[name]);
+  const el = document.getElementById('chip-' + name);
+  if (el) el.classList.toggle('active-tool', TOOLS[name]);
 }
 
+// ============================================================
+// 輸入處理
+// ============================================================
 function handleKey(e) {
   if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
 }
@@ -1317,42 +1750,28 @@ function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.style.display = 'block';
-  setTimeout(() => t.style.display = 'none', 2500);
+  setTimeout(() => { t.style.display = 'none'; }, 2800);
 }
 
 function clearChat() {
-  document.getElementById('chat-messages').innerHTML = `
-    <div class="message agent">
-      <div class="msg-avatar agent">AI</div>
-      <div>
-        <div class="msg-bubble"><p>對話已清除，請重新開始！</p></div>
-        <div class="msg-time">剛剛</div>
-      </div>
-    </div>`;
+  document.getElementById('chat-messages').innerHTML = '<div class="message agent"><div class="msg-avatar agent">AI</div><div><div class="msg-bubble"><p>對話已清除，請重新開始！</p></div><div class="msg-time">剛剛</div></div></div>';
+  msgCount = 0;
+  refreshMemoryView();
 }
 
-function clearHistory() {
-  searchHistory = [];
-  localStorage.setItem('agentHistory', '[]');
-  renderHistory();
-}
-
-function addMessage(role, html, extra) {
+// ============================================================
+// 訊息顯示
+// ============================================================
+function addMessage(role, html) {
   const msgs = document.getElementById('chat-messages');
   const div = document.createElement('div');
-  div.className = `message ${role}`;
+  div.className = 'message ' + role;
   const now = new Date().toLocaleTimeString('zh-TW', { hour:'2-digit', minute:'2-digit' });
   const avatarClass = role === 'agent' ? 'agent' : 'user';
   const avatarText = role === 'agent' ? 'AI' : '我';
-  div.innerHTML = `
-    <div class="msg-avatar ${avatarClass}">${avatarText}</div>
-    <div>
-      <div class="msg-bubble">${html}${extra || ''}</div>
-      <div class="msg-time">${now}</div>
-    </div>`;
+  div.innerHTML = '<div class="msg-avatar ' + avatarClass + '">' + avatarText + '</div><div><div class="msg-bubble">' + html + '</div><div class="msg-time">' + now + '</div></div>';
   msgs.appendChild(div);
   msgs.scrollTop = msgs.scrollHeight;
-  return div;
 }
 
 function addTyping() {
@@ -1360,13 +1779,7 @@ function addTyping() {
   const div = document.createElement('div');
   div.className = 'message agent';
   div.id = 'typing-msg';
-  div.innerHTML = `
-    <div class="msg-avatar agent">AI</div>
-    <div><div class="typing-indicator">
-      <div class="typing-dot"></div>
-      <div class="typing-dot"></div>
-      <div class="typing-dot"></div>
-    </div></div>`;
+  div.innerHTML = '<div class="msg-avatar agent">AI</div><div><div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>';
   msgs.appendChild(div);
   msgs.scrollTop = msgs.scrollHeight;
 }
@@ -1376,29 +1789,32 @@ function removeTyping() {
   if (t) t.remove();
 }
 
+// ============================================================
+// Pipeline
+// ============================================================
 function setPipeline(step) {
   ['input','search','mcp','llm','output'].forEach(s => {
     const el = document.getElementById('ps-' + s);
-    el.classList.remove('active','done');
-    if (s === step) el.classList.add('active');
+    if (el) el.classList.remove('active','done');
+  });
+  const el = document.getElementById('ps-' + step);
+  if (el) el.classList.add('active');
+}
+
+function clearPipeline() {
+  ['input','search','mcp','llm','output'].forEach(s => {
+    const el = document.getElementById('ps-' + s);
+    if (el) el.classList.remove('active','done');
   });
 }
 
-function advancePipeline(steps) {
-  let i = 0;
-  return new Promise(res => {
-    const go = () => {
-      if (i < steps.length) {
-        setPipeline(steps[i++]);
-        setTimeout(go, 900);
-      } else res();
-    };
-    go();
-  });
-}
-
+// ============================================================
+// 搜尋 URL 建構
+// ============================================================
 function buildSearchUrl(q) {
-  return `https://www.google.com/search?q=${encodeURIComponent(q)}&udm=14`;
+  const udm = { ai: '50', mixed: '', web: '14' }[searchMode];
+  const base = 'https://www.google.com/search?q=' + encodeURIComponent(q);
+  return udm ? base + '&udm=' + udm : base;
 }
 
 function saveToHistory(query, url) {
@@ -1407,178 +1823,9 @@ function saveToHistory(query, url) {
   localStorage.setItem('agentHistory', JSON.stringify(searchHistory));
 }
 
-function renderHistory() {
-  const list = document.getElementById('history-list');
-  if (!searchHistory.length) {
-    list.innerHTML = '<div style="color:var(--text-dim);font-size:13px;text-align:center;padding:40px 0">尚無搜尋記錄<br><span style="font-size:11px">開始對話後會自動記錄</span></div>';
-    return;
-  }
-  list.innerHTML = searchHistory.map((h, i) => `
-    <div class="history-item" onclick="reuseSearch('${h.query.replace(/'/g,"\\'")}')">
-      <div class="history-icon">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-        </svg>
-      </div>
-      <div class="history-content">
-        <div class="history-query">${h.query}</div>
-        <div class="history-meta">${new Date(h.time).toLocaleString('zh-TW')} · <a href="${h.url}" target="_blank" style="color:var(--accent);text-decoration:none">Google →</a></div>
-      </div>
-    </div>`).join('');
-}
-
-function reuseSearch(q) {
-  const input = document.getElementById('user-input');
-  input.value = q;
-  switchNav(document.querySelector('.nav-item.active'), 'chat');
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  document.querySelectorAll('.nav-item')[5].classList.add('active');
-  document.querySelectorAll('.tab-view').forEach(v => v.classList.remove('active'));
-  document.getElementById('tab-chat').classList.add('active');
-  sendMessage();
-}
-
-async function downloadExtension() {
-  showToast('⏳ 正在產生 ZIP 檔案...');
-
-  const manifest = JSON.stringify({
-    manifest_version: 3,
-    name: "MCP Content Fetcher",
-    version: "1.0.0",
-    description: "MCP protocol for AI Agent web content fetching via Google Search udm=14",
-    permissions: ["activeTab", "scripting", "storage", "tabs"],
-    host_permissions: ["https://www.google.com/*", "<all_urls>"],
-    background: { service_worker: "background.js" },
-    content_scripts: [{ matches: ["<all_urls>"], js: ["content.js"], run_at: "document_idle" }],
-    action: { default_popup: "popup.html", default_title: "MCP Content Fetcher" }
-  }, null, 2);
-
-  const background = `// MCP Content Fetcher - background.js
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.type === 'MCP_FETCH') {
-    handleMcpFetch(request.url).then(sendResponse); return true;
-  }
-  if (request.type === 'MCP_SEARCH') {
-    const url = \`https://www.google.com/search?q=\${encodeURIComponent(request.query)}&udm=14\`;
-    handleMcpFetch(url).then(sendResponse); return true;
-  }
-  if (request.type === 'MCP_STATUS') {
-    sendResponse({ active: true, version: '1.0.0' }); return true;
-  }
-});
-
-async function handleMcpFetch(url) {
-  try {
-    const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
-    if (!tabs || tabs.length === 0) return { status: 'error', error: 'No active tab' };
-    const results = await chrome.scripting.executeScript({
-      target: { tabId: tabs[0].id },
-      func: async (fetchUrl) => {
-        try {
-          const r = await fetch(fetchUrl, { credentials: 'omit', headers: { Accept: 'text/html' } });
-          const html = await r.text();
-          const parser = new DOMParser();
-          const doc = parser.parseFromString(html, 'text/html');
-          ['script','style','nav','footer','header','aside','noscript'].forEach(t => doc.querySelectorAll(t).forEach(el => el.remove()));
-          const links = Array.from(doc.querySelectorAll('a[href]')).slice(0,30)
-            .map(a => ({ text: a.textContent.trim().slice(0,80), href: a.href })).filter(l => l.text.length > 0);
-          return { status: 'success', title: doc.title, content: (doc.body?.innerText||'').replace(/\\s+/g,' ').trim().slice(0,6000), links, url: fetchUrl, fetchedAt: new Date().toISOString() };
-        } catch(e) { return { status: 'error', error: e.message, url: fetchUrl }; }
-      },
-      args: [url]
-    });
-    return results?.[0]?.result || { status: 'error', error: 'Script execution failed' };
-  } catch(e) { return { status: 'error', error: e.message }; }
-}
-chrome.storage.local.set({ mcpActive: true, version: '1.0.0' });`;
-
-  const contentJs = `// MCP Content Fetcher - content.js
-(function () {
-  if (window.__mcpInjected) return;
-  window.__mcpInjected = true;
-  window.addEventListener('message', (event) => {
-    if (event.data?.type !== 'MCP_REQUEST') return;
-    const links = Array.from(document.querySelectorAll('a[href]')).slice(0,20)
-      .map(a => ({ text: a.textContent.trim().slice(0,80), href: a.href })).filter(l => l.text.length > 0);
-    event.source.postMessage({ type: 'MCP_RESPONSE', payload: {
-      title: document.title, url: location.href,
-      content: document.body?.innerText?.replace(/\\s+/g,' ').trim().slice(0,6000)||'',
-      links, timestamp: Date.now()
-    }}, '*');
-  });
-  document.dispatchEvent(new CustomEvent('mcpReady', { detail: { version: '1.0.0' } }));
-})();`;
-
-  const popupHtml = `<!DOCTYPE html>
-<html lang="zh-TW">
-<head><meta charset="UTF-8">
-<style>
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{width:300px;font-family:system-ui,sans-serif;background:#0a0c10;color:#e2e8f0;padding:16px}
-  h2{font-size:14px;color:#63b3ed;margin-bottom:12px}
-  .status{display:flex;align-items:center;gap:8px;font-size:12px;color:#718096;margin-bottom:14px;padding:8px 10px;background:rgba(118,228,196,0.08);border:1px solid rgba(118,228,196,0.2);border-radius:8px}
-  .dot{width:8px;height:8px;border-radius:50%;background:#76e4c4;animation:pulse 2s infinite}
-  @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
-  .btn{width:100%;padding:9px 12px;background:rgba(99,179,237,0.12);border:1px solid rgba(99,179,237,0.25);border-radius:8px;color:#63b3ed;font-size:12px;cursor:pointer;margin-bottom:8px;text-align:left;transition:background 0.2s}
-  .btn:hover{background:rgba(99,179,237,0.22)}
-  .result{margin-top:10px;padding:8px 10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:6px;font-size:11px;color:#a0aec0;line-height:1.6;word-break:break-word;max-height:140px;overflow-y:auto;display:none;white-space:pre-wrap}
-  .note{font-size:10px;color:#4a5568;margin-top:12px;line-height:1.5}
-  a{color:#63b3ed}
-</style></head>
-<body>
-<h2>🧩 MCP Content Fetcher</h2>
-<div class="status"><span class="dot"></span>MCP 協定已啟用 · v1.0.0</div>
-<button class="btn" onclick="testSearch()">🔍 測試 Google Search (udm=14)</button>
-<button class="btn" onclick="testFetch()">📄 測試 MCP 頁面擷取</button>
-<button class="btn" onclick="openSearch()">🌐 開啟 Google 精準搜尋</button>
-<div class="result" id="result"></div>
-<div class="note">參考：<a href="https://kaojarher.github.io/MCPRPA/" target="_blank">kaojarher.github.io/MCPRPA/</a><br>Google Search udm=14 精準模式</div>
-<script>
-function show(t){const e=document.getElementById('result');e.textContent=t;e.style.display='block'}
-function testSearch(){show('搜尋中...');chrome.runtime.sendMessage({type:'MCP_SEARCH',query:'AI Agent MCP protocol'},r=>{r?.status==='success'?show('✅ 成功！\\n標題：'+r.title+'\\n預覽：'+(r.content||'').slice(0,200)):show('❌ '+( r?.error||'未知錯誤'))})}
-function testFetch(){show('擷取中...');chrome.runtime.sendMessage({type:'MCP_FETCH',url:'https://www.google.com/search?q=MCP+protocol&udm=14'},r=>{r?.status==='success'?show('✅ 擷取成功！\\n標題：'+r.title+'\\n連結數：'+(r.links?.length||0)):show('❌ '+(r?.error||'未知錯誤'))})}
-function openSearch(){chrome.tabs.create({url:'https://www.google.com/search?q=AI+Agent+MCP&udm=14'})}
-<\/script>
-</body></html>`;
-
-  const readme = `# MCP Content Fetcher - Chrome Extension
-
-## 安裝方式
-1. 解壓縮此 zip 到任意資料夾
-2. Chrome 開啟 chrome://extensions/
-3. 開啟「開發人員模式」
-4. 點「載入未封裝項目」→ 選擇解壓縮後的資料夾
-5. 工具列出現圖示即成功
-
-## Google Search URL 格式
-https://www.google.com/search?q={查詢}&udm=14
-
-## 參考
-- https://kaojarher.github.io/MCPRPA/
-- https://modelcontextprotocol.io/
-
-版本：1.0.0`;
-
-  try {
-    const zip = new JSZip();
-    const folder = zip.folder('mcp-extension');
-    folder.file('manifest.json', manifest);
-    folder.file('background.js', background);
-    folder.file('content.js', contentJs);
-    folder.file('popup.html', popupHtml);
-    folder.file('README.md', readme);
-
-    const blob = await zip.generateAsync({ type: 'blob', compression: 'DEFLATE' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'mcp-content-fetcher.zip';
-    a.click();
-    showToast('✅ mcp-content-fetcher.zip 下載完成！');
-  } catch(e) {
-    showToast('❌ 下載失敗：' + e.message);
-  }
-}
-
+// ============================================================
+// 主送出：sendMessage
+// ============================================================
 async function sendMessage() {
   if (isProcessing) return;
   const input = document.getElementById('user-input');
@@ -1590,262 +1837,434 @@ async function sendMessage() {
   input.value = '';
   input.style.height = 'auto';
 
-  addMessage('user', `<p>${query.replace(/</g,'&lt;')}</p>`);
+  addMessage('user', '<p>' + query.replace(/</g,'&lt;') + '</p>');
+  msgCount++;
 
   const searchUrl = buildSearchUrl(query);
   saveToHistory(query, searchUrl);
+  updatePlanStatus(query, '搜尋中…');
 
   addTyping();
-
-  await advancePipeline(['input','search']);
-
-  const toolCallHtml = `<div class="tool-call">
-    🔍 Google Search (udm=14)<br>
-    <a href="${searchUrl}" target="_blank" style="color:var(--accent3);word-break:break-all">${searchUrl}</a>
-  </div>`;
-
+  setPipeline('input');
+  await new Promise(r => setTimeout(r, 400));
+  setPipeline('search');
   await new Promise(r => setTimeout(r, 700));
   setPipeline('mcp');
-  await new Promise(r => setTimeout(r, 900));
+  await new Promise(r => setTimeout(r, 700));
   setPipeline('llm');
 
+  const modeLabel = { ai: '🟣 Google AI Mode (udm=50)', mixed: '⚪ Google 混合模式', web: '🔵 傳統模式 (udm=14)' }[searchMode];
+  const toolCallHtml = '<div class="tool-call">' + modeLabel + '<br><a href="' + searchUrl + '" target="_blank" style="color:var(--accent3);word-break:break-all">' + searchUrl + '</a></div>';
+
   let aiResponse = '';
-
   try {
-    const sysPrompt = `你是一個整合了 Google Search MCP 工具的 AI Agent。
-用戶剛才透過 Google Search (udm=14) 搜尋了：「${query}」
-搜尋 URL：${searchUrl}
-
-請根據你的知識，假設已透過 MCP 協定擷取到搜尋結果，
-對這個問題給出清晰、有條理的繁體中文回答。
-格式：直接回答 + 重點分析 + 建議的後續問題。
-保持簡潔，不超過300字。`;
-
+    const modeDesc = { ai: 'Google AI Mode (udm=50)', mixed: 'Google 混合模式', web: 'Google 傳統模式 (udm=14)' }[searchMode];
+    const sysPrompt = '你是一個名為「初一」的 AI Agent，整合了 ' + modeDesc + ' 工具。\n用戶搜尋了：「' + query + '」\n搜尋 URL：' + searchUrl + '\n\n請根據你的知識對這個問題給出清晰的繁體中文回答。\n格式：直接回答 + 重點分析 + 建議的後續問題。保持簡潔，不超過300字。';
     const resp = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        messages: [{ role: 'user', content: sysPrompt }]
-      })
+      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1000, messages: [{ role: 'user', content: sysPrompt }] })
     });
-
     const data = await resp.json();
-    if (data.content && data.content[0]) {
-      aiResponse = data.content[0].text;
-    }
-  } catch (e) {
-    aiResponse = null;
-  }
+    if (data.content && data.content[0]) aiResponse = data.content[0].text;
+  } catch(e) { aiResponse = ''; }
 
   if (!aiResponse) {
-    const fallbacks = {
-      default: `關於「**${query}**」的搜尋分析：\n\n已透過 Google Search (udm=14) 精準模式送出搜尋請求，MCP 協定正在擷取網頁內容。\n\n**建議的後續步驟：**\n- 安裝 Chrome Extension 以啟用完整 MCP 擷取\n- 查看搜尋記錄頁面管理歷史查詢\n- 開啟「深度分析」工具獲得更詳細結果`
-    };
-    aiResponse = fallbacks.default;
+    aiResponse = '關於「**' + query + '**」：已透過 ' + modeLabel + ' 送出搜尋。請安裝 Chrome Extension 以啟用完整 MCP 擷取，或使用📋貼入搜尋結果功能手動提供內容。';
   }
 
   removeTyping();
   setPipeline('output');
-
-  const formattedResponse = aiResponse.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
-  const resultHtml = `<div class="search-result">
-    🌐 MCP 已擷取 Google Search 結果<br>
-    <a href="${searchUrl}" target="_blank">查看原始搜尋 →</a>
-  </div>`;
-
-  addMessage('agent', `${toolCallHtml}<p style="margin-top:10px">${formattedResponse}</p>${resultHtml}`);
+  const formatted = aiResponse.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+  const resultHtml = '<div class="search-result">🌐 MCP 已擷取 Google Search 結果<br><a href="' + searchUrl + '" target="_blank">查看原始搜尋 →</a></div>';
+  addMessage('agent', toolCallHtml + '<p style="margin-top:10px">' + formatted + '</p>' + resultHtml);
 
   isProcessing = false;
   document.getElementById('send-btn').disabled = false;
-  setTimeout(() => {
-    ['input','search','mcp','llm','output'].forEach(s => document.getElementById('ps-'+s).classList.remove('active','done'));
-  }, 1500);
+  updatePlanStatus(query, '✅ 完成');
+  refreshMemoryView();
+  setTimeout(clearPipeline, 1500);
 }
 
-function downloadExtension_REMOVED() {
-  const manifest = `{
-  "manifest_version": 3,
-  "name": "MCP Content Fetcher",
-  "version": "1.0.0",
-  "description": "MCP protocol implementation for AI Agent web content fetching via Google Search",
-  "permissions": ["activeTab", "scripting", "storage", "tabs"],
-  "host_permissions": ["https://www.google.com/*", "<all_urls>"],
-  "background": { "service_worker": "background.js" },
-  "content_scripts": [{
-    "matches": ["<all_urls>"],
-    "js": ["content.js"],
-    "run_at": "document_idle"
-  }],
-  "action": {
-    "default_popup": "popup.html",
-    "default_title": "MCP Content Fetcher"
-  }
-}`;
+// ============================================================
+// 貼入搜尋結果
+// ============================================================
+let pasteMode = false;
 
-  const background = `// MCP Content Fetcher - background.js
-// Implements MCP protocol for AI Agent web content access
-
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.type === 'MCP_FETCH') {
-    handleMcpFetch(request.url, request.options).then(sendResponse);
-    return true;
+function togglePasteMode() {
+  pasteMode = !pasteMode;
+  const panel = document.getElementById('paste-panel');
+  const chip = document.getElementById('chip-paste');
+  if (panel) panel.style.display = pasteMode ? 'block' : 'none';
+  if (chip) chip.classList.toggle('active-tool', pasteMode);
+  if (pasteMode) {
+    const pc = document.getElementById('paste-content');
+    if (pc) pc.focus();
   }
-  if (request.type === 'MCP_SEARCH') {
-    const url = \`https://www.google.com/search?q=\${encodeURIComponent(request.query)}&udm=14\`;
-    handleMcpFetch(url, {}).then(sendResponse);
-    return true;
-  }
-});
+}
 
-async function handleMcpFetch(url, options) {
+async function submitWithPaste() {
+  const pasteContent = document.getElementById('paste-content');
+  const pasteText = pasteContent ? pasteContent.value.trim() : '';
+  const questionEl = document.getElementById('user-input');
+  const question = questionEl ? questionEl.value.trim() : '';
+  if (!pasteText) { showToast('⚠️ 請先貼入搜尋結果內容'); return; }
+  if (isProcessing) return;
+
+  isProcessing = true;
+  document.getElementById('send-btn').disabled = true;
+
+  const displayQ = question || '請分析以下搜尋結果並判斷任務是否完成';
+  addMessage('user', '<p>' + displayQ.replace(/</g,'&lt;') + '</p><div class="tool-call" style="border-color:rgba(246,173,85,0.3);color:var(--accent3)">📋 已貼入搜尋結果（' + pasteText.length + ' 字元）</div>');
+  msgCount++;
+  updatePlanStatus(displayQ, '分析貼入內容…');
+
+  if (questionEl) questionEl.value = '';
+  if (pasteContent) pasteContent.value = '';
+  togglePasteMode();
+
+  addTyping();
+  setPipeline('mcp');
+  await new Promise(r => setTimeout(r, 600));
+  setPipeline('llm');
+
+  let aiResponse = '';
   try {
-    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-    const result = await chrome.scripting.executeScript({
-      target: { tabId: tab.id },
-      func: async (fetchUrl) => {
-        try {
-          const r = await fetch(fetchUrl, { credentials: 'omit' });
-          const text = await r.text();
-          const parser = new DOMParser();
-          const doc = parser.parseFromString(text, 'text/html');
-          // Extract meaningful text
-          const scripts = doc.querySelectorAll('script, style, nav, footer');
-          scripts.forEach(el => el.remove());
-          return {
-            title: doc.title,
-            content: doc.body?.innerText?.slice(0, 5000) || '',
-            url: fetchUrl,
-            status: 'success'
-          };
-        } catch(e) {
-          return { status: 'error', error: e.message, url: fetchUrl };
-        }
-      },
-      args: [url]
+    const sysPrompt = '你是一個名為「初一」的 AI Agent。\n用戶手動貼入了以下搜尋結果，請你：\n1. 分析內容\n2. 判斷是否足以回答：「' + displayQ + '」\n3. 若足夠，直接給出答案\n4. 若不足，說明缺少什麼並建議下一步\n\n===== 貼入內容 =====\n' + pasteText.slice(0, 4000) + '\n===================\n\n請用繁體中文回答，格式清晰。';
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1000, messages: [{ role: 'user', content: sysPrompt }] })
     });
-    return result[0]?.result || { status: 'error', error: 'Script execution failed' };
-  } catch(e) {
-    return { status: 'error', error: e.message };
-  }
+    const data = await resp.json();
+    if (data.content && data.content[0]) aiResponse = data.content[0].text;
+  } catch(e) { aiResponse = ''; }
+
+  if (!aiResponse) aiResponse = '已收到貼入的搜尋結果（' + pasteText.length + ' 字元）。\n\n無法連線至 LLM API，請確認網路連線後再試。';
+
+  removeTyping();
+  setPipeline('output');
+  const formatted = aiResponse.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+  addMessage('agent', '<p>' + formatted + '</p>');
+
+  isProcessing = false;
+  document.getElementById('send-btn').disabled = false;
+  updatePlanStatus(displayQ, '✅ 分析完成');
+  refreshMemoryView();
+  setTimeout(clearPipeline, 1500);
 }
 
-// Store MCP results
-chrome.storage.local.set({ mcpActive: true, version: '1.0.0' });
-`;
+// ============================================================
+// 搜尋記錄
+// ============================================================
+function clearHistory() {
+  searchHistory = [];
+  localStorage.setItem('agentHistory', '[]');
+  renderHistory();
+  refreshMemoryView();
+}
 
-  const content = `// MCP Content Fetcher - content.js
-// Injected into pages to enable MCP content extraction
+function renderHistory() {
+  const list = document.getElementById('history-list');
+  if (!list) return;
+  if (!searchHistory.length) {
+    list.innerHTML = '<div style="color:var(--text-dim);font-size:13px;text-align:center;padding:40px 0">尚無搜尋記錄<br><span style="font-size:11px">開始對話後會自動記錄</span></div>';
+    return;
+  }
+  list.innerHTML = searchHistory.map(function(h) {
+    return '<div class="history-item" onclick="reuseSearch(\'' + h.query.replace(/'/g,"\\'").replace(/</g,'&lt;') + '\')">'
+      + '<div class="history-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>'
+      + '<div class="history-content"><div class="history-query">' + h.query.replace(/</g,'&lt;') + '</div>'
+      + '<div class="history-meta">' + new Date(h.time).toLocaleString('zh-TW') + ' · <a href="' + h.url + '" target="_blank" style="color:var(--accent);text-decoration:none">Google →</a></div></div></div>';
+  }).join('');
+}
 
-(function() {
-  if (window.__mcpInjected) return;
-  window.__mcpInjected = true;
+function reuseSearch(q) {
+  const input = document.getElementById('user-input');
+  if (input) input.value = q;
+  const chatNav = document.querySelector('[onclick*="\'chat\'"]');
+  if (chatNav) switchNav(chatNav, 'chat');
+  sendMessage();
+}
 
-  window.addEventListener('message', (event) => {
-    if (event.data?.type === 'MCP_REQUEST') {
-      const content = document.body?.innerText?.slice(0, 5000) || '';
-      const links = Array.from(document.querySelectorAll('a[href]'))
-        .slice(0, 20)
-        .map(a => ({ text: a.textContent.trim(), href: a.href }));
-      event.source.postMessage({
-        type: 'MCP_RESPONSE',
-        payload: {
-          title: document.title,
-          url: location.href,
-          content,
-          links,
-          timestamp: Date.now()
-        }
-      }, '*');
+// ============================================================
+// System Prompt MD 操作
+// ============================================================
+function loadAllMdFromStorage() {
+  MD_KEYS.forEach(function(key) {
+    const saved = localStorage.getItem('md_' + key);
+    const el = document.getElementById('md-' + key);
+    if (saved && el) {
+      el.value = saved;
+      setMdStatus(key, 'saved', '已從本地載入');
     }
-  });
-
-  // Signal ready
-  document.dispatchEvent(new CustomEvent('mcpReady', { detail: { version: '1.0.0' } }));
-})();
-`;
-
-  const popup = `<!DOCTYPE html>
-<html lang="zh-TW">
-<head>
-<meta charset="UTF-8">
-<style>
-  body { width: 280px; font-family: system-ui; background: #0a0c10; color: #e2e8f0; padding: 16px; margin: 0; }
-  h2 { font-size: 14px; color: #63b3ed; margin: 0 0 12px; }
-  .status { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #718096; margin-bottom: 12px; }
-  .dot { width: 8px; height: 8px; border-radius: 50%; background: #76e4c4; }
-  .btn { width: 100%; padding: 8px; background: rgba(99,179,237,0.15); border: 1px solid rgba(99,179,237,0.3); border-radius: 6px; color: #63b3ed; font-size: 12px; cursor: pointer; margin-bottom: 6px; }
-  .btn:hover { background: rgba(99,179,237,0.25); }
-  .note { font-size: 10px; color: #4a5568; margin-top: 8px; }
-</style>
-</head>
-<body>
-<h2>🧩 MCP Content Fetcher</h2>
-<div class="status"><span class="dot"></span>MCP 協定已啟用</div>
-<button class="btn" onclick="testFetch()">測試 MCP 擷取</button>
-<button class="btn" onclick="openSearch()">開啟 Google Search</button>
-<div class="note">版本 1.0.0 · 支援 udm=14 精準模式<br>參考：kaojarher.github.io/MCPRPA/</div>
-<script>
-function testFetch() {
-  chrome.runtime.sendMessage({ type: 'MCP_SEARCH', query: 'AI Agent MCP test' }, r => {
-    alert(r?.status === 'success' ? '✅ MCP 正常運作\\n\\n' + r.title : '❌ ' + (r?.error || '未知錯誤'));
+    if (el) el.addEventListener('input', function() { setMdStatus(key, 'modified', '已修改，尚未儲存'); });
   });
 }
-function openSearch() {
-  chrome.tabs.create({ url: 'https://www.google.com/search?q=AI+Agent+MCP&udm=14' });
+
+function setMdStatus(key, type, msg) {
+  const el = document.getElementById('status-' + key);
+  if (el) { el.textContent = msg; el.className = 'md-status ' + type; }
 }
-<\/script>
-</body>
-</html>`;
 
-  const readme = `# MCP Content Fetcher - Chrome Extension
+function saveMd(key) {
+  const el = document.getElementById('md-' + key);
+  if (!el) return;
+  localStorage.setItem('md_' + key, el.value);
+  const now = new Date().toLocaleTimeString('zh-TW', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
+  setMdStatus(key, 'saved', '✅ 已儲存至本地 · ' + now);
+  showToast('✅ ' + key.toUpperCase() + '.md 已儲存');
+}
 
-## 功能說明
-此擴充套件實作 MCP (Model Context Protocol)，讓 AI Agent 能夠：
-1. 透過 Google Search (udm=14 精準模式) 搜尋
-2. 擷取搜尋結果頁面的文字內容
-3. 回傳給 AI Agent 進行分析
-
-## 安裝方式
-1. 解壓縮此 zip 檔案
-2. 開啟 Chrome → chrome://extensions/
-3. 啟用「開發人員模式」
-4. 點選「載入未封裝項目」→ 選擇此資料夾
-5. 安裝完成
-
-## Google Search URL 格式
-https://www.google.com/search?q={查詢內容}&udm=14
-
-## 參考資料
-- kaojarher.github.io/MCPRPA/
-- Model Context Protocol Spec
-
-版本：1.0.0
-作者：AI Agent Studio
-`;
-
-  // Build ZIP using JSZip-like approach via data URIs
-  // Since we can't use external libs here, create individual files as a downloadable package
-  const files = { 'manifest.json': manifest, 'background.js': background, 'content.js': content, 'popup.html': popup, 'README.md': readme };
-
-  // Create a blob with instructions + all file contents
-  let combined = '/* MCP Content Fetcher - Extension Package\n   解壓縮後按照 README.md 安裝\n   請手動建立以下檔案：\n*/\n\n';
-  for (const [name, content_] of Object.entries(files)) {
-    combined += `\n${'='.repeat(60)}\n// 檔案名稱：${name}\n${'='.repeat(60)}\n${content_}\n`;
-  }
-
-  const blob = new Blob([combined], { type: 'text/plain;charset=utf-8' });
+function exportMd(key, filename) {
+  const el = document.getElementById('md-' + key);
+  if (!el) return;
+  const blob = new Blob([el.value], { type: 'text/markdown;charset=utf-8' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = 'mcp-content-fetcher-extension.txt';
+  a.download = filename;
   a.click();
-
-  showToast('✅ 擴充套件檔案已下載！請按 README 安裝');
+  showToast('💾 ' + filename + ' 已匯出');
 }
 
-// Init
+function importMd(key) {
+  const el = document.getElementById('file-' + key);
+  if (el) el.click();
+}
+
+function loadMdFile(event, key) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const el = document.getElementById('md-' + key);
+    if (el) el.value = e.target.result;
+    setMdStatus(key, 'modified', '📂 已匯入「' + file.name + '」，請點「儲存」確認');
+    showToast('📂 已匯入 ' + file.name);
+  };
+  reader.readAsText(file, 'UTF-8');
+  event.target.value = '';
+}
+
+// ============================================================
+// 記憶系統動態渲染
+// ============================================================
+function refreshMemoryView() {
+  const shortEl = document.getElementById('short-mem-count');
+  if (shortEl) {
+    shortEl.innerHTML = '<div class="sp-file">對話輪次：' + msgCount + '</div>'
+      + '<div class="sp-file">搜尋記錄：' + searchHistory.length + ' 筆</div>'
+      + '<div class="sp-file">當前模式：' + (searchMode==='ai'?'🟣 AI Mode':searchMode==='mixed'?'⚪ 混合':'🔵 傳統') + '</div>';
+  }
+  const longEl = document.getElementById('long-mem-list');
+  if (longEl) {
+    const mdSaved = MD_KEYS.filter(function(k){ return !!localStorage.getItem('md_'+k); }).length;
+    longEl.innerHTML = '<div class="sp-file">搜尋歷史：' + searchHistory.length + ' 筆</div>'
+      + '<div class="sp-file">MD 模組已儲存：' + mdSaved + ' / 5</div>'
+      + '<div class="sp-file">localStorage 總計：' + localStorage.length + ' 筆</div>'
+      + (searchHistory.length > 0 ? '<div class="sp-file" style="color:var(--accent3)">最新：' + searchHistory[0].query.slice(0,30) + '…</div>' : '');
+  }
+  const skillEl = document.getElementById('skill-mem-list');
+  if (skillEl) {
+    skillEl.innerHTML = MD_KEYS.map(function(k){
+      const exists = !!localStorage.getItem('md_'+k);
+      return '<div class="sp-file" style="color:' + (exists?'var(--accent2)':'var(--text-dim)') + '">' + (exists?'✅':'○') + ' ' + k.toUpperCase() + '.md</div>';
+    }).join('');
+  }
+}
+
+// ============================================================
+// 任務規劃狀態
+// ============================================================
+function updatePlanStatus(query, step) {
+  const el = document.getElementById('plan-status');
+  if (!el) return;
+  const now = new Date().toLocaleTimeString('zh-TW', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
+  el.innerHTML = '<span style="color:var(--accent2)">▶ 任務：</span>' + query.replace(/</g,'&lt;').slice(0,60)
+    + '\n<span style="color:var(--text-dim)">時間：</span>' + now
+    + '\n\n<span style="color:var(--accent)">1. 感知</span>  輸入接收完成'
+    + '\n<span style="color:var(--accent)">2. 任務拆解</span>  意圖識別 → 搜尋任務'
+    + '\n<span style="color:var(--accent)">3. 工具選擇</span>  ' + (searchMode==='ai'?'Google AI Mode (udm=50)':searchMode==='mixed'?'混合模式':'傳統模式 (udm=14)')
+    + '\n<span style="color:var(--accent)">4. 執行</span>  ' + step;
+}
+
+// ============================================================
+// 匯出 / 清除全部記憶
+// ============================================================
+async function exportAllMemory() {
+  if (typeof JSZip === 'undefined') { showToast('❌ JSZip 未載入，請檢查網路'); return; }
+  try {
+    const zip = new JSZip();
+    MD_KEYS.forEach(function(k) {
+      const el = document.getElementById('md-' + k);
+      const content = localStorage.getItem('md_' + k) || (el ? el.value : '');
+      if (content) zip.file('system-prompt/' + k.toUpperCase() + '.md', content);
+    });
+    if (searchHistory.length > 0) {
+      zip.file('history/search-history.json', JSON.stringify(searchHistory, null, 2));
+      const csv = ['時間,查詢,URL'].concat(searchHistory.map(function(h){ return '"'+h.time+'","'+h.query+'","'+h.url+'"'; })).join('\n');
+      zip.file('history/search-history.csv', csv);
+    }
+    zip.file('config/snapshot.json', JSON.stringify({ exportedAt: new Date().toISOString(), searchMode, msgCount, historyCount: searchHistory.length }, null, 2));
+    const blob = await zip.generateAsync({ type: 'blob', compression: 'DEFLATE' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = '初一Agent-記憶備份-' + new Date().toISOString().slice(0,10) + '.zip';
+    a.click();
+    showToast('💾 全部記憶已匯出');
+  } catch(e) { showToast('❌ 匯出失敗：' + e.message); }
+}
+
+function clearAllMemory() {
+  MD_KEYS.forEach(function(k){ localStorage.removeItem('md_'+k); });
+  localStorage.removeItem('agentHistory');
+  searchHistory = [];
+  msgCount = 0;
+  refreshMemoryView();
+  renderHistory();
+  showToast('🗑 全部記憶已清除');
+}
+
+// ============================================================
+// Chrome Extension ZIP 下載（真正二進位 ZIP）
+// ============================================================
+async function downloadExtension() {
+  if (typeof JSZip === 'undefined') { showToast('❌ JSZip 未載入'); return; }
+
+  const manifest = JSON.stringify({
+    manifest_version: 3,
+    name: "MCP Content Fetcher",
+    version: "1.0.0",
+    description: "MCP protocol for AI Agent - Google Search udm=50/14 content fetching",
+    permissions: ["activeTab","scripting","storage","tabs"],
+    host_permissions: ["https://www.google.com/*","<all_urls>"],
+    background: { service_worker: "background.js" },
+    content_scripts: [{ matches: ["<all_urls>"], js: ["content.js"], run_at: "document_idle" }],
+    action: { default_popup: "popup.html", default_title: "MCP Content Fetcher" }
+  }, null, 2);
+
+  const background = [
+    '// MCP Content Fetcher - background.js',
+    'chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {',
+    '  if (request.type === "MCP_FETCH") { handleMcpFetch(request.url).then(sendResponse); return true; }',
+    '  if (request.type === "MCP_SEARCH") {',
+    '    const url = `https://www.google.com/search?q=${encodeURIComponent(request.query)}&udm=${request.udm||"50"}`;',
+    '    handleMcpFetch(url).then(sendResponse); return true;',
+    '  }',
+    '  if (request.type === "MCP_STATUS") { sendResponse({ active: true, version: "1.0.0" }); return true; }',
+    '});',
+    '',
+    'async function handleMcpFetch(url) {',
+    '  try {',
+    '    const tabs = await chrome.tabs.query({ active: true, currentWindow: true });',
+    '    if (!tabs.length) return { status: "error", error: "No active tab" };',
+    '    const results = await chrome.scripting.executeScript({',
+    '      target: { tabId: tabs[0].id },',
+    '      func: async (fetchUrl) => {',
+    '        try {',
+    '          const r = await fetch(fetchUrl, { credentials: "omit", headers: { Accept: "text/html" } });',
+    '          const html = await r.text();',
+    '          const parser = new DOMParser();',
+    '          const doc = parser.parseFromString(html, "text/html");',
+    '          ["script","style","nav","footer","header","aside","noscript"].forEach(t => doc.querySelectorAll(t).forEach(el => el.remove()));',
+    '          const links = Array.from(doc.querySelectorAll("a[href]")).slice(0,30)',
+    '            .map(a => ({ text: a.textContent.trim().slice(0,80), href: a.href })).filter(l => l.text.length > 0);',
+    '          return { status: "success", title: doc.title,',
+    '            content: (doc.body?.innerText||"").replace(/\\s+/g," ").trim().slice(0,6000),',
+    '            links, url: fetchUrl, fetchedAt: new Date().toISOString() };',
+    '        } catch(e) { return { status: "error", error: e.message, url: fetchUrl }; }',
+    '      },',
+    '      args: [url]',
+    '    });',
+    '    return results?.[0]?.result || { status: "error", error: "Script failed" };',
+    '  } catch(e) { return { status: "error", error: e.message }; }',
+    '}',
+    'chrome.storage.local.set({ mcpActive: true, version: "1.0.0" });'
+  ].join('\n');
+
+  const contentJs = [
+    '// MCP Content Fetcher - content.js',
+    '(function () {',
+    '  if (window.__mcpInjected) return;',
+    '  window.__mcpInjected = true;',
+    '  window.addEventListener("message", (event) => {',
+    '    if (event.data?.type !== "MCP_REQUEST") return;',
+    '    const links = Array.from(document.querySelectorAll("a[href]")).slice(0,20)',
+    '      .map(a => ({ text: a.textContent.trim().slice(0,80), href: a.href })).filter(l => l.text.length > 0);',
+    '    event.source.postMessage({ type: "MCP_RESPONSE", payload: {',
+    '      title: document.title, url: location.href,',
+    '      content: document.body?.innerText?.replace(/\\s+/g," ").trim().slice(0,6000)||"",',
+    '      links, timestamp: Date.now()',
+    '    }}, "*");',
+    '  });',
+    '  document.dispatchEvent(new CustomEvent("mcpReady", { detail: { version: "1.0.0" } }));',
+    '})();'
+  ].join('\n');
+
+  const popupHtml = '<!DOCTYPE html>\n<html lang="zh-TW">\n<head><meta charset="UTF-8">\n<style>\n'
+    + '*{box-sizing:border-box;margin:0;padding:0}\n'
+    + 'body{width:300px;font-family:system-ui,sans-serif;background:#0a0c10;color:#e2e8f0;padding:16px}\n'
+    + 'h2{font-size:14px;color:#63b3ed;margin-bottom:12px}\n'
+    + '.status{display:flex;align-items:center;gap:8px;font-size:12px;color:#718096;margin-bottom:14px;padding:8px 10px;background:rgba(118,228,196,0.08);border:1px solid rgba(118,228,196,0.2);border-radius:8px}\n'
+    + '.dot{width:8px;height:8px;border-radius:50%;background:#76e4c4;animation:pulse 2s infinite}\n'
+    + '@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}\n'
+    + '.btn{width:100%;padding:9px 12px;background:rgba(99,179,237,0.12);border:1px solid rgba(99,179,237,0.25);border-radius:8px;color:#63b3ed;font-size:12px;cursor:pointer;margin-bottom:8px;text-align:left;transition:background 0.2s}\n'
+    + '.btn:hover{background:rgba(99,179,237,0.22)}\n'
+    + '.result{margin-top:10px;padding:8px 10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:6px;font-size:11px;color:#a0aec0;line-height:1.6;word-break:break-word;max-height:140px;overflow-y:auto;display:none;white-space:pre-wrap}\n'
+    + '.note{font-size:10px;color:#4a5568;margin-top:12px;line-height:1.5}\na{color:#63b3ed}\n'
+    + '</style></head>\n<body>\n'
+    + '<h2>\ud83e\udde9 MCP Content Fetcher</h2>\n'
+    + '<div class="status"><span class="dot"></span>MCP \u5354\u5b9a\u5df2\u555f\u7528 \u00b7 v1.0.0</div>\n'
+    + '<button class="btn" onclick="testSearch()">\ud83d\udd0d \u6e2c\u8a66 Google AI Mode (udm=50)</button>\n'
+    + '<button class="btn" onclick="testFetch()">\ud83d\udcc4 \u6e2c\u8a66 MCP \u64f7\u53d6</button>\n'
+    + '<button class="btn" onclick="openSearch()">\ud83c\udf10 \u958b\u555f Google \u641c\u5c0b</button>\n'
+    + '<div class="result" id="result"></div>\n'
+    + '<div class="note">\u53c3\u8003\uff1a<a href="https://kaojarher.github.io/MCPRPA/" target="_blank">kaojarher.github.io/MCPRPA/</a><br>Google Search udm=50 AI Mode</div>\n'
+    + '<script>\n'
+    + 'function show(t){const e=document.getElementById("result");e.textContent=t;e.style.display="block"}\n'
+    + 'function testSearch(){show("\u641c\u5c0b\u4e2d...");chrome.runtime.sendMessage({type:"MCP_SEARCH",query:"AI Agent MCP",udm:"50"},r=>{r?.status==="success"?show("\u2705 \u6210\u529f\uff01\\n\u6a19\u984c\uff1a"+r.title+"\\n\u9810\u89bd\uff1a"+(r.content||"").slice(0,200)):show("\u274c "+(r?.error||"\u672a\u77e5\u932f\u8aa4"))})}\n'
+    + 'function testFetch(){show("\u64f7\u53d6\u4e2d...");chrome.runtime.sendMessage({type:"MCP_FETCH",url:"https://www.google.com/search?q=MCP&udm=50"},r=>{r?.status==="success"?show("\u2705 \u64f7\u53d6\u6210\u529f\uff01\\n\u6a19\u984c\uff1a"+r.title+"\\n\u9023\u7d50\u6578\uff1a"+(r.links?.length||0)):show("\u274c "+(r?.error||"\u672a\u77e5\u932f\u8aa4"))})}\n'
+    + 'function openSearch(){chrome.tabs.create({url:"https://www.google.com/search?q=AI+Agent+MCP&udm=50"})}\n'
+    + '<\/script>\n</body></html>';
+
+  const readme = '# MCP Content Fetcher - Chrome Extension\n\n'
+    + '## 安裝方式\n1. 解壓縮此 zip 到任意資料夾\n'
+    + '2. Chrome 開啟 chrome://extensions/\n'
+    + '3. 開啟「開發人員模式」\n'
+    + '4. 點「載入未封裝項目」→ 選擇解壓縮後的資料夾\n'
+    + '5. 工具列出現圖示即成功\n\n'
+    + '## 支援的 Google Search 模式\n'
+    + '- AI Mode: https://www.google.com/search?q={查詢}&udm=50\n'
+    + '- 傳統模式: https://www.google.com/search?q={查詢}&udm=14\n\n'
+    + '版本：1.0.0';
+
+  try {
+    const zip = new JSZip();
+    const folder = zip.folder('mcp-extension');
+    folder.file('manifest.json', manifest);
+    folder.file('background.js', background);
+    folder.file('content.js', contentJs);
+    folder.file('popup.html', popupHtml);
+    folder.file('README.md', readme);
+    const blob = await zip.generateAsync({ type: 'blob', compression: 'DEFLATE', compressionOptions: { level: 6 } });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'mcp-content-fetcher.zip';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    showToast('✅ mcp-content-fetcher.zip 下載完成！');
+  } catch(e) {
+    showToast('❌ 下載失敗：' + e.message);
+  }
+}
+
+// ============================================================
+// 初始化
+// ============================================================
 renderHistory();
+loadAllMdFromStorage();
+refreshMemoryView();
 document.getElementById('user-input').focus();
 </script>
 </body>
